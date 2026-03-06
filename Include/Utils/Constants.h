@@ -32,6 +32,7 @@ constexpr const std::array SHIP_VERTICES = std::array{
     glm::vec2( 0.0f ,  0.6f), // Top
     glm::vec2(-0.5f ,  0.2f), // Top-left
 };
+constexpr const float SHIP_SPEED = 100.0f;
 
 #define SHIP_TURRET_COLOR COLOR(70, 129, 80)
 constexpr const std::array SHIP_TURRET_VERTICES = std::array{

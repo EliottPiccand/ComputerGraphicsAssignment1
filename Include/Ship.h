@@ -17,7 +17,7 @@ class Ship : public Entity
   private:
     glm::vec2 position;
     float orientation;
-    SpeedState SpeedState;
+    SpeedState speedState;
 
   public:
     Ship(glm::vec2 position, float orientation, Input &input);
