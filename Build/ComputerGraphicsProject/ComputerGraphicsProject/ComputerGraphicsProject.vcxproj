@@ -158,8 +158,12 @@
     <ClCompile Include="..\..\..\Src\Application.cpp" />
     <ClCompile Include="..\..\..\Src\Camera.cpp" />
     <ClCompile Include="..\..\..\Src\Clock.cpp" />
+    <ClCompile Include="..\..\..\Src\Entity.cpp" />
+    <ClCompile Include="..\..\..\Src\Event.cpp" />
+    <ClCompile Include="..\..\..\Src\EventHandler.cpp" />
     <ClCompile Include="..\..\..\Src\Input.cpp" />
     <ClCompile Include="..\..\..\Src\Main.cpp" />
+    <ClCompile Include="..\..\..\Src\Missile.cpp" />
     <ClCompile Include="..\..\..\Src\Ship.cpp" />
     <ClCompile Include="..\..\..\Src\Utils\Time.cpp" />
     <ClCompile Include="..\..\..\Src\Window.cpp" />
@@ -170,8 +174,11 @@
     <ClInclude Include="..\..\..\Include\Camera.h" />
     <ClInclude Include="..\..\..\Include\Clock.h" />
     <ClInclude Include="..\..\..\Include\Entity.h" />
+    <ClInclude Include="..\..\..\Include\Event.h" />
+    <ClInclude Include="..\..\..\Include\EventHandler.h" />
     <ClInclude Include="..\..\..\Include\GL.h" />
     <ClInclude Include="..\..\..\Include\Input.h" />
+    <ClInclude Include="..\..\..\Include\Missile.h" />
     <ClInclude Include="..\..\..\Include\Ship.h" />
     <ClInclude Include="..\..\..\Include\Utils\Constants.h" />
     <ClInclude Include="..\..\..\Include\Utils\Time.h" />

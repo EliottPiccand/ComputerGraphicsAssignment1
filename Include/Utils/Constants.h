@@ -41,3 +41,6 @@ constexpr const std::array SHIP_TURRET_VERTICES = std::array{
     glm::vec2( 0.25f, -0.1f), // Bottom-right
     glm::vec2( 0.0f ,  0.2f), // Top
 };
+
+constexpr const float MISSILE_SPEED = 150.0f;
+constexpr const float MISSILE_TARGET_ERROR_MARGIN = 10.0f;

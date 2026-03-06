@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include "EventHandler.h"
 #include "GL.h"
 #include "Input.h"
 
@@ -19,9 +20,12 @@ class Ship : public Entity
     float orientation;
     SpeedState speedState;
 
-  public:
-    Ship(glm::vec2 position, float orientation, Input &input);
+    bool aiming;
+    glm::vec2 targetPosition;
 
-    void update(float deltaTime, Input &input) override;
+  public:
+    Ship(int id, glm::vec2 position, float orientation, Input &input);
+
+    void update(float deltaTime, Input &input, Camera &camera, EventHandler &events) override;
     void render() const override;
 };

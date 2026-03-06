@@ -1,7 +1,6 @@
 #include "Window.h"
 
 #include <format>
-#include <memory>
 #include <stdexcept>
 
 void glfwErrorCallback(int code, const char *description)

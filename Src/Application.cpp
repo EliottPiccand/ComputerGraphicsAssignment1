@@ -1,13 +1,11 @@
 #include "Application.h"
 
 #include <format>
-#include <memory>
 
-#include "GL.h"
-#include "Input.h"
+#include "Event.h"
+#include "Missile.h"
 #include "Ship.h"
 #include "Utils/Constants.h"
-#include "Utils/Time.h"
 
 Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 {
@@ -15,7 +13,9 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
                                       [this](uint32_t width, uint32_t height) { onResize(width, height); });
     input.initialize(*window);
 
-    entities.push_back(std::make_shared<Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input));
+    nextEntityId = 0;
+    entities.push_back(std::make_shared<Ship>(nextEntityId, SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input));
+    nextEntityId += 1;
 }
 
 void Application::run()
@@ -44,10 +44,30 @@ void Application::update(float deltaTime)
         window->setTitle(title);
     }
 
+    // Event handleing
+    for (const auto &rawEvent : events.popAll())
+    {
+        if (auto *event = dynamic_cast<event::FireEvent *>(rawEvent.get()))
+        {
+            entities.push_back(std::make_shared<Missile>(nextEntityId, event->start, event->target));
+            nextEntityId += 1;
+        }
+        else if (auto *event = dynamic_cast<event::TargetReachedEvent *>(rawEvent.get()))
+        {
+            auto it =
+                std::find_if(entities.begin(), entities.end(), [&event](auto e) { return e->id == event->entityId; });
+
+            if (it != entities.end())
+            {
+                entities.erase(it);
+            }
+        }
+    }
+
     // Update ship
     for (auto &entity : entities)
     {
-        entity->update(deltaTime, input);
+        entity->update(deltaTime, input, camera, events);
     }
 }
 

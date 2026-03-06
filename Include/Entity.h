@@ -1,10 +1,16 @@
 #pragma once
 
+#include "Camera.h"
+#include "EventHandler.h"
 #include "Input.h"
 
 class Entity
 {
   public:
-    virtual void update(float deltaTime, Input &input) {};
+    int id;
+
+    Entity(int id);
+
+    virtual void update(float deltaTime, Input &input, Camera &camera, EventHandler &events) {};
     virtual void render() const {};
 };

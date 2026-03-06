@@ -1,15 +1,25 @@
 #include "Input.h"
 
-#include <GLFW/glfw3.h>
+#include <cassert>
 
 void Input::initialize(const Window &window)
 {
     window_handle = window.handle;
 }
 
-void Input::bind(Action action, int key)
+void Input::bindKey(Action action, int key)
 {
+    key += 1;
+    assert((key & 0xFF'FF'FF'FF) == key);
     binds[action] = key;
+    states[action] = State::HeldReleased;
+}
+
+void Input::bindMouseButton(Action action, int mouseButton)
+{
+    mouseButton += 1;
+    assert((mouseButton & 0xFF'FF'FF'FF) == mouseButton);
+    binds[action] = mouseButton << 16;
     states[action] = State::HeldReleased;
 }
 
@@ -17,8 +27,9 @@ void Input::update()
 {
     for (const auto [action, key] : binds)
     {
-
-        const auto glfw_state = glfwGetKey(window_handle, key);
+        const auto glfw_state = ((key & ((0xFF'FF'FF'FF) << 16)) == 0)
+                                    ? glfwGetKey(window_handle, key - 1)
+                                    : glfwGetMouseButton(window_handle, (key >> 16) - 1);
 
         if (glfw_state == GLFW_PRESS)
         {
@@ -61,4 +72,11 @@ Input::State Input::operator[](Action action) const
 bool Input::isPressed(Action action) const
 {
     return states.at(action) == State::JustPressed || states.at(action) == State::HeldPressed;
+}
+
+glm::vec2 Input::getMousePos() const
+{
+    double xpos, ypos;
+    glfwGetCursorPos(window_handle, &xpos, &ypos);
+    return {static_cast<float>(xpos), static_cast<float>(ypos)};
 }

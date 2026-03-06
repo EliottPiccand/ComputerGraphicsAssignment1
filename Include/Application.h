@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Clock.h"
 #include "Entity.h"
+#include "EventHandler.h"
 #include "GL.h"
 #include "Input.h"
 #include "Utils/Time.h"
@@ -20,9 +21,11 @@ class Application
 
     std::unique_ptr<Window> window;
     Input input;
+    EventHandler events;
 
     Camera camera;
 
+    int nextEntityId;
     std::vector<std::shared_ptr<Entity>> entities;
 
     void update(float deltaTime);

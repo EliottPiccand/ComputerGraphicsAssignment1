@@ -15,6 +15,8 @@ class Input
         SpeedDown,
         TurnLeft,
         TurnRight,
+        Fire,
+        CancelFire,
     };
 
     enum class State
@@ -33,9 +35,11 @@ class Input
   public:
     void initialize(const Window &window);
 
-    void bind(Action action, int key);
+    void bindKey(Action action, int key);
+    void bindMouseButton(Action action, int mouseButton);
     void update();
 
     [[nodiscard]] State operator[](Action action) const;
     [[nodiscard]] bool isPressed(Action action) const;
+    [[nodiscard]] glm::vec2 getMousePos() const;
 };

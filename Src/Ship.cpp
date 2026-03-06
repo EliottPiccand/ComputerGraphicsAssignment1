@@ -1,7 +1,6 @@
 #include "Ship.h"
 
-#include "GL.h"
-#include "Input.h"
+#include "Event.h"
 #include "Utils/Constants.h"
 #include "World.h"
 
@@ -15,19 +14,23 @@
         angle += 360.0f;                                                                                               \
     }
 
-Ship::Ship(glm::vec2 position, float orientation, Input &input) : position(position), orientation(orientation)
+Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
+    : Entity(entityId), position(position), orientation(orientation)
 {
     CHECK_ANGLE(orientation);
 
     speedState = SpeedState::Stop;
+    aiming = false;
 
-    input.bind(Input::Action::SpeedUp, GLFW_KEY_W);
-    input.bind(Input::Action::TurnLeft, GLFW_KEY_A);
-    input.bind(Input::Action::SpeedDown, GLFW_KEY_S);
-    input.bind(Input::Action::TurnRight, GLFW_KEY_D);
+    input.bindKey(Input::Action::SpeedUp, GLFW_KEY_W);
+    input.bindKey(Input::Action::TurnLeft, GLFW_KEY_A);
+    input.bindKey(Input::Action::SpeedDown, GLFW_KEY_S);
+    input.bindKey(Input::Action::TurnRight, GLFW_KEY_D);
+    input.bindMouseButton(Input::Action::Fire, GLFW_MOUSE_BUTTON_LEFT);
+    input.bindMouseButton(Input::Action::CancelFire, GLFW_MOUSE_BUTTON_RIGHT);
 }
 
-void Ship::update(float deltaTime, Input &input)
+void Ship::update(float deltaTime, Input &input, Camera &camera, EventHandler &events)
 {
     bool boundingBoxUpdated = false;
 
@@ -79,6 +82,20 @@ void Ship::update(float deltaTime, Input &input)
         boundingBoxUpdated = true;
     }
 
+    if (input[Input::Action::Fire] == Input::State::JustPressed)
+    {
+        aiming = true;
+    }
+    if (input[Input::Action::CancelFire] == Input::State::JustPressed)
+    {
+        aiming = false;
+    }
+    if (input[Input::Action::Fire] == Input::State::JustReleased && aiming)
+    {
+        aiming = false;
+        events.post<event::FireEvent>(position, targetPosition);
+    }
+
     // Move
     const glm::vec2 direction = glm::rotate(glm::vec2(0.0f, -1.0f), glm::radians(orientation));
 
@@ -96,9 +113,17 @@ void Ship::update(float deltaTime, Input &input)
         break;
     }
 
+    // Collisions
     if (boundingBoxUpdated)
     {
         World::checkCollision(position, orientation);
+    }
+
+    // Target
+    if (aiming)
+    {
+        targetPosition = camera.toWorldPosition(input.getMousePos());
+        targetPosition = glm::clamp(targetPosition, {0.0f, 0.0f}, {WORLD_WIDTH, WORLD_HEIGHT});
     }
 }
 
@@ -142,4 +167,15 @@ void Ship::render() const
     glEnd();
 
     glPopMatrix();
+
+    // Target
+    if (aiming)
+    {
+        glColor3f(1.0, 0.0, 0.0);
+        glLineWidth(3.0);
+        glBegin(GL_LINES);
+        glVertex2f(position.x, position.y);
+        glVertex2f(targetPosition.x, targetPosition.y);
+        glEnd();
+    }
 }
