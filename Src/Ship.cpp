@@ -41,10 +41,10 @@ void Ship::render() const
     glEnd();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    // Turet
-    glColor3f(SHIP_TURET_COLOR);
+    // Turret
+    glColor3f(SHIP_TURRET_COLOR);
     glBegin(GL_POLYGON);
-    for (const auto &vertex : SHIP_TURET_VERTICES)
+    for (const auto &vertex : SHIP_TURRET_VERTICES)
     {
         glVertex2f(vertex.x, vertex.y);
     }
