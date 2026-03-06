@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-Clock::Clock() : lastFrame(now())
+Clock::Clock() : lastFrame(now()), frameTimeSum(0)
 {
 }
 

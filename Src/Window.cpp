@@ -3,7 +3,7 @@
 #include <format>
 #include <stdexcept>
 
-void glfwErrorCallback(int code, const char *description)
+static void glfwErrorCallback(int code, const char *description)
 {
     const std::string message = std::format("GLFW error ({}) : {}", code, description);
     throw std::runtime_error(message);

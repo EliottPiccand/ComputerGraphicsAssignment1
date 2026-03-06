@@ -29,14 +29,14 @@ class Input
 
   private:
     GLFWwindow *window_handle;
-    std::unordered_map<Action, int> binds;
+    std::unordered_map<Action, unsigned int> binds;
     std::unordered_map<Action, State> states;
 
   public:
     void initialize(const Window &window);
 
-    void bindKey(Action action, int key);
-    void bindMouseButton(Action action, int mouseButton);
+    void bindKey(Action action, unsigned int key);
+    void bindMouseButton(Action action, unsigned int mouseButton);
     void update();
 
     [[nodiscard]] State operator[](Action action) const;

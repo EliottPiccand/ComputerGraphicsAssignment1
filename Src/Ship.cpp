@@ -21,6 +21,8 @@ Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
 
     speedState = SpeedState::Stop;
     aiming = false;
+    aimingValidPosition = false;
+    targetPosition = {};
 
     input.bindKey(Input::Action::SpeedUp, GLFW_KEY_W);
     input.bindKey(Input::Action::TurnLeft, GLFW_KEY_A);

@@ -2,34 +2,37 @@
 
 #include <cassert>
 
+constexpr const size_t MASK_OFFSET = sizeof(unsigned int) * 8 / 2;
+constexpr const unsigned int MASK = (1 << MASK_OFFSET) - 1;
+
 void Input::initialize(const Window &window)
 {
     window_handle = window.handle;
 }
 
-void Input::bindKey(Action action, int key)
+void Input::bindKey(Action action, unsigned int key)
 {
     key += 1;
-    assert((key & 0xFF'FF'FF'FF) == key);
+    assert((key & MASK) == key);
     binds[action] = key;
     states[action] = State::HeldReleased;
 }
 
-void Input::bindMouseButton(Action action, int mouseButton)
+void Input::bindMouseButton(Action action, unsigned int mouseButton)
 {
     mouseButton += 1;
-    assert((mouseButton & 0xFF'FF'FF'FF) == mouseButton);
-    binds[action] = mouseButton << 16;
+    assert((mouseButton & MASK) == mouseButton);
+    binds[action] = mouseButton << MASK_OFFSET;
     states[action] = State::HeldReleased;
 }
 
 void Input::update()
 {
-    for (const auto [action, key] : binds)
+    for (const auto &[action, key] : binds)
     {
-        const auto glfw_state = ((key & ((0xFF'FF'FF'FF) << 16)) == 0)
+        const auto glfw_state = ((key & (MASK << MASK_OFFSET)) == 0)
                                     ? glfwGetKey(window_handle, key - 1)
-                                    : glfwGetMouseButton(window_handle, (key >> 16) - 1);
+                                    : glfwGetMouseButton(window_handle, (key >> MASK_OFFSET) - 1);
 
         if (glfw_state == GLFW_PRESS)
         {
