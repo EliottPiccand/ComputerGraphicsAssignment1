@@ -3,16 +3,7 @@
 #include "GL.h"
 #include "Input.h"
 #include "Utils/Constants.h"
-
-Ship::Ship(glm::vec2 position, float orientation, Input &input) : position(position), orientation(orientation)
-{
-    speedState = SpeedState::Stop;
-
-    input.bind(Input::Action::SpeedUp, GLFW_KEY_W);
-    input.bind(Input::Action::TurnLeft, GLFW_KEY_A);
-    input.bind(Input::Action::SpeedDown, GLFW_KEY_S);
-    input.bind(Input::Action::TurnRight, GLFW_KEY_D);
-}
+#include "World.h"
 
 #define CHECK_ANGLE(angle)                                                                                             \
     while (angle > 360.0f)                                                                                             \
@@ -24,8 +15,22 @@ Ship::Ship(glm::vec2 position, float orientation, Input &input) : position(posit
         angle += 360.0f;                                                                                               \
     }
 
+Ship::Ship(glm::vec2 position, float orientation, Input &input) : position(position), orientation(orientation)
+{
+    CHECK_ANGLE(orientation);
+
+    speedState = SpeedState::Stop;
+
+    input.bind(Input::Action::SpeedUp, GLFW_KEY_W);
+    input.bind(Input::Action::TurnLeft, GLFW_KEY_A);
+    input.bind(Input::Action::SpeedDown, GLFW_KEY_S);
+    input.bind(Input::Action::TurnRight, GLFW_KEY_D);
+}
+
 void Ship::update(float deltaTime, Input &input)
 {
+    bool boundingBoxUpdated = false;
+
     // Handle user inputs
     if (input[Input::Action::SpeedUp] == Input::State::JustPressed)
     {
@@ -63,11 +68,15 @@ void Ship::update(float deltaTime, Input &input)
     {
         orientation -= 15.0f;
         CHECK_ANGLE(orientation);
+
+        boundingBoxUpdated = true;
     }
     if (input[Input::Action::TurnRight] == Input::State::JustPressed)
     {
         orientation += 15.0f;
         CHECK_ANGLE(orientation);
+
+        boundingBoxUpdated = true;
     }
 
     // Move
@@ -77,12 +86,19 @@ void Ship::update(float deltaTime, Input &input)
     {
     case SpeedState::Forward:
         position += direction * deltaTime * SHIP_SPEED;
+        boundingBoxUpdated = true;
         break;
     case SpeedState::Stop:
         break;
     case SpeedState::Backward:
         position -= direction * deltaTime * SHIP_SPEED;
+        boundingBoxUpdated = true;
         break;
+    }
+
+    if (boundingBoxUpdated)
+    {
+        World::checkCollision(position, orientation);
     }
 }
 
@@ -93,7 +109,7 @@ void Ship::render() const
     glLoadIdentity();
     glTranslatef(position.x, position.y, 0.0f);
     glRotatef(orientation + 180.0f, 0.0f, 0.0f, 1.0f);
-    glScalef(100.0f, 200.0f, 1.0f);
+    glScalef(SHIP_SCALE.x, SHIP_SCALE.y, 1.0f);
 
     // Background
     glColor3f(SHIP_COLOR);
