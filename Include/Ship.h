@@ -1,8 +1,7 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include "Entity.h"
+#include "GL.h"
 #include "Input.h"
 
 class Ship : public Entity

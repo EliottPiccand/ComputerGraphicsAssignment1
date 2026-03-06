@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-#include <GL.h>
+#include "GL.h"
 
 class Input;
 

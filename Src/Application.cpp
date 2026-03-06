@@ -5,15 +5,17 @@
 
 #include "GL.h"
 #include "Input.h"
+#include "Ship.h"
 #include "Utils/Constants.h"
+#include "Utils/Time.h"
 
-constexpr const char *WINDOW_TITLE = "Window Title";
-
-Application::Application() : clock(120.0f), camera(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
+Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 {
     window = std::make_unique<Window>(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, WINDOW_TITLE,
                                       [this](uint32_t width, uint32_t height) { onResize(width, height); });
     input.initialize(*window);
+
+    entities.push_back(std::make_shared<Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input));
 }
 
 void Application::run()
@@ -33,21 +35,34 @@ void Application::run()
 void Application::update(float deltaTime)
 {
     // Window title update
-    if (auto fps = clock.getFpsUpdate()) {
-        std::string title = std::format("{} | {} FPS", WINDOW_TITLE, std::roundf(*fps));
+    if (now() - lastFpsUpdate > FPS_UPDATE_INTERVAL)
+    {
+        lastFpsUpdate = now();
+
+        const float fps = clock.getFps();
+        const std::string title = std::format("{} | {} FPS", WINDOW_TITLE, std::roundf(fps));
         window->setTitle(title);
     }
 
+    // Update ship
+    for (auto &entity : entities)
+    {
+        entity->update(deltaTime, input);
+    }
 }
 
-void Application::render()
+void Application::render() const
 {
     glClearColor(BACKGROUND_COLOR, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     camera.render();
-    world.render();
+    World::render();
 
+    for (const auto &entity : entities)
+    {
+        entity->render();
+    }
 }
 
 void Application::onResize(uint32_t width, uint32_t height)

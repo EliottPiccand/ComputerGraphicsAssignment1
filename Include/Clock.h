@@ -1,24 +1,20 @@
 #pragma once
 
-#include <chrono>
 #include <cstddef>
-#include <optional>
+
+#include "Utils/Time.h"
 
 class Clock
 {
   private:
-    float inverseTargetFps;
-    std::chrono::time_point<std::chrono::steady_clock> lastFrame;
+    Instant lastFrame;
 
-    float fps = 0.0f;
-
-    static constexpr size_t FPS_SAMPLES = 240;
-    float frameTimeSum = 0.0f;
+    Duration frameTimeSum;
     size_t frameCount = 0;
 
   public:
-    Clock(float targetFps);
+    Clock();
 
     float tick();
-    [[nodiscard]] const std::optional<float> getFpsUpdate() const;
+    [[nodiscard]] const float getFps();
 };

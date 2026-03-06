@@ -161,6 +161,7 @@
     <ClCompile Include="..\..\..\Src\Input.cpp" />
     <ClCompile Include="..\..\..\Src\Main.cpp" />
     <ClCompile Include="..\..\..\Src\Ship.cpp" />
+    <ClCompile Include="..\..\..\Src\Utils\Time.cpp" />
     <ClCompile Include="..\..\..\Src\Window.cpp" />
     <ClCompile Include="..\..\..\Src\World.cpp" />
   </ItemGroup>

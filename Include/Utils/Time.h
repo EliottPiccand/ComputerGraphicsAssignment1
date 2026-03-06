@@ -4,4 +4,7 @@
 #include <cstdint>
 #include <ratio>
 
-using Duration = std::chrono::duration<uint64_t, std::milli>;
+using Duration = std::chrono::nanoseconds;
+
+using Instant = std::chrono::time_point<std::chrono::steady_clock>;
+Instant now();

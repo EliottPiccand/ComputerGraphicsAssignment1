@@ -6,7 +6,7 @@
 
 void glfwErrorCallback(int code, const char *description)
 {
-    std::string message = std::format("GLFW error ({}) : {}", code, description);
+    const std::string message = std::format("GLFW error ({}) : {}", code, description);
     throw std::runtime_error(message);
 }
 

@@ -58,6 +58,7 @@ Input::State Input::operator[](Action action) const
     return states.at(action);
 }
 
-bool Input::isPressed(Action action) const {
+bool Input::isPressed(Action action) const
+{
     return states.at(action) == State::JustPressed || states.at(action) == State::HeldPressed;
 }

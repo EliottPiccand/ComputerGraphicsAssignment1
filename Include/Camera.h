@@ -2,7 +2,6 @@
 
 #include <cstdint>
 
-
 class Camera
 {
   private:

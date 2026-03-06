@@ -1,38 +1,27 @@
 #include "Clock.h"
 
-Clock::Clock(float targetFps) : inverseTargetFps(1.0f / targetFps), lastFrame(std::chrono::steady_clock::now())
+#include <chrono>
+
+Clock::Clock() : lastFrame(now())
 {
 }
 
 float Clock::tick()
 {
-    while (true)
-    {
-        const std::chrono::duration<float> elapsed = std::chrono::steady_clock::now() - lastFrame;
+    const Duration elapsed = now() - lastFrame;
 
-        if (elapsed.count() > inverseTargetFps)
-        {
-            frameCount += 1;
-            frameTimeSum += elapsed.count();
+    frameCount += 1;
+    frameTimeSum += elapsed;
 
-            if (frameCount >= FPS_SAMPLES)
-            {
-                fps = static_cast<float>(frameCount) / frameTimeSum;
-                frameCount = 0;
-                frameTimeSum = 0.0f;
-            }
+    lastFrame = now();
 
-            lastFrame = std::chrono::steady_clock::now();
-            return elapsed.count();
-        }
-    }
+    return std::chrono::duration<float>(elapsed).count();
 }
 
-const std::optional<float> Clock::getFpsUpdate() const
+const float Clock::getFps()
 {
-    if (frameCount == 0)
-    {
-        return {fps};
-    }
-    return std::nullopt;
+    const float fps = static_cast<float>(frameCount) / std::chrono::duration<float>(frameTimeSum).count();
+    frameCount = 0;
+    frameTimeSum = Duration(0);
+    return fps;
 }
