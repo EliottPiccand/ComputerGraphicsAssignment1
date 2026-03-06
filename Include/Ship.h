@@ -21,6 +21,7 @@ class Ship : public Entity
     SpeedState speedState;
 
     bool aiming;
+    bool aimingValidPosition;
     glm::vec2 targetPosition;
 
   public:

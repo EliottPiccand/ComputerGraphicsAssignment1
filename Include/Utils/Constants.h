@@ -15,7 +15,7 @@ constexpr const uint32_t DEFAULT_WINDOW_HEIGHT = 720;
 constexpr const Duration FPS_UPDATE_INTERVAL = Duration(std::chrono::seconds(2));
 #define BACKGROUND_COLOR COLOR(189, 220, 230)
 
-constexpr const float WORLD_WIDTH = 1200.0f;
+constexpr const float WORLD_WIDTH = 1000.0f;
 constexpr const float WORLD_HEIGHT = 1000.0f;
 constexpr const float WORLD_DISPLAY_MARGIN = 100.0f;
 #define WATER_COLOR COLOR(92, 174, 200)

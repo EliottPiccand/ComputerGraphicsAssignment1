@@ -93,7 +93,9 @@ void Ship::update(float deltaTime, Input &input, Camera &camera, EventHandler &e
     if (input[Input::Action::Fire] == Input::State::JustReleased && aiming)
     {
         aiming = false;
-        events.post<event::FireEvent>(position, targetPosition);
+        if (aimingValidPosition) {
+            events.post<event::FireEvent>(position, targetPosition);
+        }
     }
 
     // Move
@@ -123,7 +125,9 @@ void Ship::update(float deltaTime, Input &input, Camera &camera, EventHandler &e
     if (aiming)
     {
         targetPosition = camera.toWorldPosition(input.getMousePos());
-        targetPosition = glm::clamp(targetPosition, {0.0f, 0.0f}, {WORLD_WIDTH, WORLD_HEIGHT});
+        glm::vec2 clampedTargetPosition = glm::clamp(targetPosition, {0.0f, 0.0f}, {WORLD_WIDTH, WORLD_HEIGHT});
+    
+        aimingValidPosition = targetPosition == clampedTargetPosition;
     }
 }
 
@@ -169,7 +173,7 @@ void Ship::render() const
     glPopMatrix();
 
     // Target
-    if (aiming)
+    if (aiming && aimingValidPosition)
     {
         glColor3f(1.0, 0.0, 0.0);
         glLineWidth(3.0);
