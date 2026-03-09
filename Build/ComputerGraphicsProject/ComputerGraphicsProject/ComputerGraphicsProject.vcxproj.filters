@@ -60,6 +60,9 @@
     <ClCompile Include="..\..\..\Src\Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Src\Utils\Random.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Application.h">
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Include\Missile.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Utils\Random.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

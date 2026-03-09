@@ -6,9 +6,11 @@
 #include "Missile.h"
 #include "Ship.h"
 #include "Utils/Constants.h"
+#include "Utils/Random.h"
 
 Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 {
+    Random::initialize();
     window = std::make_unique<Window>(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, WINDOW_TITLE,
                                       [this](uint32_t width, uint32_t height) { onResize(width, height); });
     input.initialize(*window);
@@ -60,11 +62,14 @@ void Application::update(float deltaTime)
             if (it != entities.end())
             {
                 entities.erase(it);
+                camera.shake();
             }
         }
     }
 
-    // Update ship
+    camera.update();
+
+    // Update entities
     for (auto &entity : entities)
     {
         entity->update(deltaTime, input, camera, events);

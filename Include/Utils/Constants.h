@@ -3,15 +3,18 @@
 #include <array>
 #include <chrono>
 #include <cstdint>
+#include <ratio>
 
 #include "GL.h"
 #include "Utils/Time.h"
 
 #define COLOR(r, g, b) r##.0f / 255.0f, g##.0f / 255.0f, b##.0f / 255.0f
 
+constexpr const float EPSILON = 1e-5f;
+
 constexpr const char *WINDOW_TITLE = "Window Title";
-constexpr const uint32_t DEFAULT_WINDOW_WIDTH = 1280;
-constexpr const uint32_t DEFAULT_WINDOW_HEIGHT = 720;
+constexpr const uint32_t DEFAULT_WINDOW_WIDTH = 1280; // m
+constexpr const uint32_t DEFAULT_WINDOW_HEIGHT = 720; // m
 constexpr const Duration FPS_UPDATE_INTERVAL = Duration(std::chrono::seconds(2));
 #define BACKGROUND_COLOR COLOR(189, 220, 230)
 
@@ -33,7 +36,7 @@ constexpr const std::array SHIP_VERTICES = std::array{
     glm::vec2(-0.5f ,  0.2f), // Top-left
 };
 constexpr const glm::vec2 SHIP_SCALE = { 100.0f, 200.0f };
-constexpr const float SHIP_SPEED = 100.0f;
+constexpr const float SHIP_SPEED = 100.0f; // m/s
 
 #define SHIP_TURRET_COLOR COLOR(70, 129, 80)
 constexpr const std::array SHIP_TURRET_VERTICES = std::array{
@@ -42,5 +45,10 @@ constexpr const std::array SHIP_TURRET_VERTICES = std::array{
     glm::vec2( 0.0f ,  0.2f), // Top
 };
 
-constexpr const float MISSILE_SPEED = 150.0f;
-constexpr const float MISSILE_TARGET_ERROR_MARGIN = 10.0f;
+constexpr const float MISSILE_SPEED = 150.0f; // m/s
+constexpr const float MISSILE_TARGET_ERROR_MARGIN = 10.0f; // m
+
+constexpr const float SHAKING_INTENSITY = 10.0f; // m
+constexpr const float SHAKING_DECAY_FACTOR = 0.9f;
+constexpr const float SHAKING_SPREAD_ANGLE = 60.0f; // °
+constexpr const Duration SHAKING_UPDATE_INTERVAL = Duration(std::chrono::milliseconds(20));
