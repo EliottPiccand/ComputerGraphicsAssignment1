@@ -2,9 +2,10 @@
 
 #include <format>
 
+#include "Entity/Explosion.h"
+#include "Entity/Missile.h"
+#include "Entity/Ship.h"
 #include "Event.h"
-#include "Missile.h"
-#include "Ship.h"
 #include "Utils/Constants.h"
 #include "Utils/Random.h"
 
@@ -16,8 +17,7 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
     input.initialize(*window);
 
     nextEntityId = 0;
-    entities.push_back(std::make_shared<Ship>(nextEntityId, SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input));
-    nextEntityId += 1;
+    newEntity<entity::Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input);
 }
 
 void Application::run()
@@ -32,6 +32,18 @@ void Application::run()
 
         window->endFrame();
     }
+}
+
+bool Application::deleteEntity(int entityId)
+{
+    auto it = std::find_if(entities.begin(), entities.end(), [entityId](auto e) { return e->id == entityId; });
+
+    if (it != entities.end())
+    {
+        entities.erase(it);
+        return true;
+    }
+    return false;
 }
 
 void Application::update(float deltaTime)
@@ -51,19 +63,19 @@ void Application::update(float deltaTime)
     {
         if (auto *event = dynamic_cast<event::FireEvent *>(rawEvent.get()))
         {
-            entities.push_back(std::make_shared<Missile>(nextEntityId, event->start, event->target));
-            nextEntityId += 1;
+            newEntity<entity::Missile>(event->start, event->target);
         }
         else if (auto *event = dynamic_cast<event::TargetReachedEvent *>(rawEvent.get()))
         {
-            auto it =
-                std::find_if(entities.begin(), entities.end(), [&event](auto e) { return e->id == event->entityId; });
-
-            if (it != entities.end())
+            if (deleteEntity(event->entityId))
             {
-                entities.erase(it);
+                newEntity<entity::Explosion>(event->position);
                 camera.shake();
             }
+        }
+        else if (auto *event = dynamic_cast<event::ExplosionDoneEvent *>(rawEvent.get()))
+        {
+            deleteEntity(event->entityId);
         }
     }
 

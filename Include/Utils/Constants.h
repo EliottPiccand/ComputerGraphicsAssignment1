@@ -45,10 +45,15 @@ constexpr const std::array SHIP_TURRET_VERTICES = std::array{
     glm::vec2( 0.0f ,  0.2f), // Top
 };
 
-constexpr const float MISSILE_SPEED = 150.0f; // m/s
+constexpr const float MISSILE_SPEED = 450.0f; // m/s
 constexpr const float MISSILE_TARGET_ERROR_MARGIN = 10.0f; // m
 
 constexpr const float SHAKING_INTENSITY = 10.0f; // m
 constexpr const float SHAKING_DECAY_FACTOR = 0.9f;
 constexpr const float SHAKING_SPREAD_ANGLE = 60.0f; // °
 constexpr const Duration SHAKING_UPDATE_INTERVAL = Duration(std::chrono::milliseconds(20));
+
+constexpr const float EXPLOSION_MAX_RADIUS = 100.0f; // m
+constexpr const float EXPLOSION_EXPANSION_RATE = 300.0f; // m/s
+#define EXPLOSION_COLOR_START COLOR(242, 248, 100)
+#define EXPLOSION_COLOR_END COLOR(182, 45, 12)

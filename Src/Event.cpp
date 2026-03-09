@@ -6,6 +6,10 @@ FireEvent::FireEvent(glm::vec2 &start, glm::vec2 &target) : start(start), target
 {
 }
 
-TargetReachedEvent::TargetReachedEvent(int entityId) : entityId(entityId)
+TargetReachedEvent::TargetReachedEvent(int entityId, glm::vec2 position) : entityId(entityId), position(position)
+{
+}
+
+ExplosionDoneEvent::ExplosionDoneEvent(int entityId) : entityId(entityId)
 {
 }

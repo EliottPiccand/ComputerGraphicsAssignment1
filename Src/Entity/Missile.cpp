@@ -1,21 +1,23 @@
-#include "Missile.h"
+#include "Entity/Missile.h"
 
 #include "Event.h"
 #include "Utils/Constants.h"
+
+using namespace entity;
 
 Missile::Missile(int entityId, glm::vec2 position, glm::vec2 target)
     : Entity(entityId), position(position), target(target)
 {
 }
 
-void Missile::update(float deltaTime, Input &input, Camera &camera, EventHandler &events)
+void Missile::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events)
 {
     const glm::vec2 direction = glm::normalize(target - position);
     position += direction * deltaTime * MISSILE_SPEED;
 
     if (glm::length(position - target) < MISSILE_TARGET_ERROR_MARGIN)
     {
-        events.post<event::TargetReachedEvent>(id);
+        events.post<event::TargetReachedEvent>(id, target);
     }
 }
 

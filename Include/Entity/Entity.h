@@ -4,6 +4,9 @@
 #include "EventHandler.h"
 #include "Input.h"
 
+namespace entity
+{
+
 class Entity
 {
   public:
@@ -11,6 +14,8 @@ class Entity
 
     Entity(int id);
 
-    virtual void update(float deltaTime, Input &input, Camera &camera, EventHandler &events) {};
+    virtual void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events) {};
     virtual void render() const {};
 };
+
+} // namespace entity

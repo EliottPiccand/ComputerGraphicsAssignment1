@@ -13,7 +13,7 @@ void Input::initialize(const Window &window)
 void Input::bindKey(Action action, unsigned int key)
 {
     key += 1;
-    assert((key & MASK) == key);
+    assert((key & MASK) == key && "`key` must be a `GLFW_KEY_...` macro");
     binds[action] = key;
     states[action] = State::HeldReleased;
 }
@@ -21,7 +21,7 @@ void Input::bindKey(Action action, unsigned int key)
 void Input::bindMouseButton(Action action, unsigned int mouseButton)
 {
     mouseButton += 1;
-    assert((mouseButton & MASK) == mouseButton);
+    assert((mouseButton & MASK) == mouseButton && "`mouseButton` must be a `GLFW_MOUSE_BUTTON_...` macro");
     binds[action] = mouseButton << MASK_OFFSET;
     states[action] = State::HeldReleased;
 }

@@ -21,8 +21,16 @@ struct FireEvent : public Event
 struct TargetReachedEvent : public Event
 {
     int entityId;
+    glm::vec2 position;
 
-    TargetReachedEvent(int entityId);
+    TargetReachedEvent(int entityId, glm::vec2 position);
+};
+
+struct ExplosionDoneEvent : public Event
+{
+    int entityId;
+
+    ExplosionDoneEvent(int entityId);
 };
 
 } // namespace event

@@ -1,7 +1,13 @@
 #pragma once
 
-#include "Entity.h"
+#include "Camera.h"
+#include "Entity/Entity.h"
 #include "EventHandler.h"
+#include "GL.h"
+#include "Input.h"
+
+namespace entity
+{
 
 class Missile : public Entity
 {
@@ -12,6 +18,8 @@ class Missile : public Entity
   public:
     Missile(int entityId, glm::vec2 position, glm::vec2 target);
 
-    void update(float deltaTime, Input &input, Camera &camera, EventHandler &events) override;
+    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events) override;
     void render() const override;
 };
+
+} // namespace entity

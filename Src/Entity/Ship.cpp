@@ -1,8 +1,10 @@
-#include "Ship.h"
+#include "Entity/Ship.h"
 
 #include "Event.h"
 #include "Utils/Constants.h"
 #include "World.h"
+
+using namespace entity;
 
 #define CHECK_ANGLE(angle)                                                                                             \
     while (angle > 360.0f)                                                                                             \
@@ -32,7 +34,7 @@ Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
     input.bindMouseButton(Input::Action::CancelFire, GLFW_MOUSE_BUTTON_RIGHT);
 }
 
-void Ship::update(float deltaTime, Input &input, Camera &camera, EventHandler &events)
+void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events)
 {
     bool boundingBoxUpdated = false;
 
@@ -95,7 +97,8 @@ void Ship::update(float deltaTime, Input &input, Camera &camera, EventHandler &e
     if (input[Input::Action::Fire] == Input::State::JustReleased && aiming)
     {
         aiming = false;
-        if (aimingValidPosition) {
+        if (aimingValidPosition)
+        {
             events.post<event::FireEvent>(position, targetPosition);
         }
     }
@@ -128,7 +131,7 @@ void Ship::update(float deltaTime, Input &input, Camera &camera, EventHandler &e
     {
         targetPosition = camera.toWorldPosition(input.getMousePos());
         glm::vec2 clampedTargetPosition = glm::clamp(targetPosition, {0.0f, 0.0f}, {WORLD_WIDTH, WORLD_HEIGHT});
-    
+
         aimingValidPosition = targetPosition == clampedTargetPosition;
     }
 }
