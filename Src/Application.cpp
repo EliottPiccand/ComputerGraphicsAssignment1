@@ -24,7 +24,7 @@ void Application::run()
 {
     while (!window->shouldClose())
     {
-        float deltaTime = clock.tick();
+        const float deltaTime = clock.tick();
 
         input.update();
         update(deltaTime);

@@ -22,7 +22,7 @@ void Explosion::update(float deltaTime, Input &input, const Camera &camera, Even
 
 void Explosion::render() const
 {
-    float t = radius / EXPLOSION_MAX_RADIUS;
+    const float t = radius / EXPLOSION_MAX_RADIUS;
     glm::vec3 color = lerp(glm::vec3(EXPLOSION_COLOR_START), glm::vec3(EXPLOSION_COLOR_END), t);
     glColor3f(color.x, color.y, color.y);
     glPointSize(radius);
