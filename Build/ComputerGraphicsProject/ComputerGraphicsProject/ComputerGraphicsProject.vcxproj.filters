@@ -25,6 +25,9 @@
     <Filter Include="Header Files\Entity">
       <UniqueIdentifier>{3249f1d2-8486-4a17-86ed-243e3ec7dde9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Container">
+      <UniqueIdentifier>{c2c31f74-9af6-423e-a72c-0fcd43a1b525}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Src\Application.cpp">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Include\Utils\Math.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Container\CyclicArray.h">
+      <Filter>Header Files\Container</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

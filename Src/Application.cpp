@@ -14,6 +14,8 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
     Random::initialize();
     window = std::make_unique<Window>(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, WINDOW_TITLE,
                                       [this](uint32_t width, uint32_t height) { onResize(width, height); });
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     input.initialize(*window);
 
     nextEntityId = 0;

@@ -175,6 +175,7 @@
     <ClInclude Include="..\..\..\Include\Application.h" />
     <ClInclude Include="..\..\..\Include\Camera.h" />
     <ClInclude Include="..\..\..\Include\Clock.h" />
+    <ClInclude Include="..\..\..\Include\Container\CyclicArray.h" />
     <ClInclude Include="..\..\..\Include\Entity\Entity.h" />
     <ClInclude Include="..\..\..\Include\Entity\Explosion.h" />
     <ClInclude Include="..\..\..\Include\Entity\Missile.h" />

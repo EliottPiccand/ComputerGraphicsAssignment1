@@ -37,6 +37,11 @@ constexpr const std::array SHIP_VERTICES = std::array{
 };
 constexpr const glm::vec2 SHIP_SCALE = { 100.0f, 200.0f };
 constexpr const float SHIP_SPEED = 100.0f; // m/s
+constexpr const size_t TRAIL_LENGTH = 80;
+constexpr const Duration TRAIL_UPDATE_INTERVAL = Duration(std::chrono::milliseconds(50)); 
+#define TRAIL_COLOR COLOR(255, 255, 255)
+constexpr const float TRAIL_MAX_SIZE = 50.0f; // m
+constexpr const float TRAIL_MIN_SIZE = 10.0f; // m
 
 #define SHIP_TURRET_COLOR COLOR(70, 129, 80)
 constexpr const std::array SHIP_TURRET_VERTICES = std::array{

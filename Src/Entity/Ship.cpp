@@ -1,7 +1,9 @@
 #include "Entity/Ship.h"
 
 #include "Event.h"
+#include "GL.h"
 #include "Utils/Constants.h"
+#include "Utils/Math.h"
 #include "World.h"
 
 using namespace entity;
@@ -17,7 +19,7 @@ using namespace entity;
     }
 
 Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
-    : Entity(entityId), position(position), orientation(orientation)
+    : Entity(entityId), position(position), orientation(orientation), lastTrailUpdate(now())
 {
     CHECK_ANGLE(orientation);
 
@@ -134,10 +136,34 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
 
         aimingValidPosition = targetPosition == clampedTargetPosition;
     }
+
+    // Trail
+    if (now() - lastTrailUpdate > TRAIL_UPDATE_INTERVAL)
+    {
+        lastTrailUpdate = now();
+        if (trail.head() != position)
+        {
+            trail.push(position);
+        }
+    }
 }
 
 void Ship::render() const
 {
+    // Trail
+    size_t i = 0;
+    for (const auto &position : trail)
+    {
+        const float t = static_cast<float>(TRAIL_LENGTH - i) / static_cast<float>(TRAIL_LENGTH);
+        glColor4f(TRAIL_COLOR, (1.0f - t) / 5.0f);
+        glPointSize(lerp(TRAIL_MAX_SIZE, TRAIL_MIN_SIZE, t));
+        glBegin(GL_POINTS);
+        glVertex2f(position.x, position.y);
+        glEnd();
+
+        i += 1;
+    }
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
