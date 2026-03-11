@@ -1,8 +1,9 @@
 #include "Entity/Ship.h"
 
+#include <limits>
+
 #include "Event.h"
 #include "GL.h"
-#include "Utils/Constants.h"
 #include "Utils/Math.h"
 #include "World.h"
 
@@ -19,7 +20,7 @@ using namespace entity;
     }
 
 Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
-    : Entity(entityId), position(position), orientation(orientation), lastTrailUpdate(now())
+    : Entity(entityId), position(position), orientation(orientation)
 {
     CHECK_ANGLE(orientation);
 
@@ -138,30 +139,42 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
     }
 
     // Trail
-    if (now() - lastTrailUpdate > TRAIL_UPDATE_INTERVAL)
+    // 1) update intensity
+    for (auto &particle : trailParticles)
     {
-        lastTrailUpdate = now();
-        if (trail.head() != position)
-        {
-            trail.push(position);
-        }
+        particle.intensity -= deltaTime * TRAIL_PARTICLE_INTENTISY_DECAY;
+    }
+
+    // 2) remove dead ones
+    while (trailParticles.size() > 0 && trailParticles.back().intensity <= 0.0f)
+    {
+        trailParticles.popBack();
+    }
+
+    // 3) add new
+    const float distanceToPreviousTrailStep = (trailParticles.size() > 0)
+                                                  ? glm::length(position - trailParticles.front().position)
+                                                  : std::numeric_limits<float>::infinity();
+
+    if (boundingBoxUpdated && distanceToPreviousTrailStep >= MIN_TRAIL_STEP)
+    {
+        trailParticles.pushFront(TrailParticle{
+            .position = position,
+            .intensity = 1.0f,
+        });
     }
 }
 
 void Ship::render() const
 {
     // Trail
-    size_t i = 0;
-    for (const auto &position : trail)
+    for (const auto &particle : trailParticles)
     {
-        const float t = static_cast<float>(TRAIL_LENGTH - i) / static_cast<float>(TRAIL_LENGTH);
-        glColor4f(TRAIL_COLOR, (1.0f - t) / 5.0f);
-        glPointSize(lerp(TRAIL_MAX_SIZE, TRAIL_MIN_SIZE, t));
+        glColor4f(TRAIL_COLOR, particle.intensity / 4.0f);
+        glPointSize(lerp(TRAIL_MAX_SIZE, TRAIL_MIN_SIZE, particle.intensity));
         glBegin(GL_POINTS);
-        glVertex2f(position.x, position.y);
+        glVertex2f(particle.position.x, particle.position.y);
         glEnd();
-
-        i += 1;
     }
 
     glMatrixMode(GL_MODELVIEW);

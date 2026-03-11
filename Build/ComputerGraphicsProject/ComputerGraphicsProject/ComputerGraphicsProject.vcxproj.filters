@@ -128,7 +128,7 @@
     <ClInclude Include="..\..\..\Include\Utils\Math.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Include\Container\CyclicArray.h">
+    <ClInclude Include="..\..\..\Include\Container\CyclicQueue.h">
       <Filter>Header Files\Container</Filter>
     </ClInclude>
   </ItemGroup>

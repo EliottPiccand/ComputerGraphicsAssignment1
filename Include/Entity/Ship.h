@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Camera.h"
-#include "Container/CyclicArray.h"
+#include "Container/CyclicQueue.h"
 #include "Entity/Entity.h"
 #include "EventHandler.h"
 #include "GL.h"
 #include "Input.h"
 #include "Utils/Constants.h"
-#include "Utils/Time.h"
 
 namespace entity
 {
@@ -31,8 +30,13 @@ class Ship : public Entity
     bool aimingValidPosition;
     glm::vec2 targetPosition;
 
-    CyclicArray<glm::vec2, TRAIL_LENGTH> trail;
-    Instant lastTrailUpdate;
+    struct TrailParticle
+    {
+        glm::vec2 position;
+        float intensity;
+    };
+
+    mutable CyclicQueue<TrailParticle, MAX_TRAIL_PARTICLES> trailParticles;
 
   public:
     Ship(int id, glm::vec2 position, float orientation, Input &input);
