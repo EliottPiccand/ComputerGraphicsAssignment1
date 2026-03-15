@@ -12,16 +12,29 @@
 
 constexpr const float EPSILON = 1e-5f;
 
-constexpr const char *WINDOW_TITLE = "Window Title";
+// **************
+// *   Window   *
+// **************
+
+constexpr const char *WINDOW_TITLE = "Computer Graphics Assignment #1";
 constexpr const uint32_t DEFAULT_WINDOW_WIDTH = 1280; // m
 constexpr const uint32_t DEFAULT_WINDOW_HEIGHT = 720; // m
 constexpr const Duration FPS_UPDATE_INTERVAL = Duration(std::chrono::seconds(2));
 #define BACKGROUND_COLOR COLOR(189, 220, 230)
 
-constexpr const float WORLD_WIDTH = 1000.0f;
-constexpr const float WORLD_HEIGHT = 1000.0f;
-constexpr const float WORLD_DISPLAY_MARGIN = 100.0f;
+
+// *************
+// *   World   *
+// *************
+
+constexpr const float WORLD_WIDTH = 1000.0f; // m
+constexpr const float WORLD_HEIGHT = 1000.0f; // m
+constexpr const float WORLD_DISPLAY_MARGIN = 100.0f; // m
 #define WATER_COLOR COLOR(92, 174, 200)
+
+// ************
+// *   Ship   *
+// ************
 
 constexpr const glm::vec2 SHIP_DEFAULT_POSITION = { WORLD_WIDTH / 2.0f, WORLD_HEIGHT / 2.0f };
 constexpr const float SHIP_DEFAULT_ORIENTATION = 45.0f; // °
@@ -37,12 +50,6 @@ constexpr const std::array SHIP_VERTICES = std::array{
 };
 constexpr const glm::vec2 SHIP_SCALE = { 100.0f, 200.0f };
 constexpr const float SHIP_SPEED = 100.0f; // m/s
-constexpr const size_t MAX_TRAIL_PARTICLES = 100;
-#define TRAIL_COLOR COLOR(255, 255, 255)
-constexpr const float TRAIL_MAX_SIZE = 100.0f; // m
-constexpr const float TRAIL_MIN_SIZE = 20.0f; // m
-constexpr const float MIN_TRAIL_STEP = 10.0f; // m
-constexpr const float TRAIL_PARTICLE_INTENTISY_DECAY = 0.2f; // alpha[0;1] / s
 
 #define SHIP_TURRET_COLOR COLOR(70, 129, 80)
 constexpr const std::array SHIP_TURRET_VERTICES = std::array{
@@ -51,15 +58,92 @@ constexpr const std::array SHIP_TURRET_VERTICES = std::array{
     glm::vec2( 0.0f ,  0.2f), // Top
 };
 
+// ***********************
+// *   Ship Foam Trail   *
+// ***********************
+
+constexpr const size_t MAX_TRAIL_PARTICLES = 100;
+#define TRAIL_COLOR COLOR(255, 255, 255)
+constexpr const float TRAIL_MAX_SIZE = 100.0f; // m
+constexpr const float TRAIL_MIN_SIZE = 20.0f; // m
+constexpr const float MIN_TRAIL_STEP = 10.0f; // m
+constexpr const float TRAIL_PARTICLE_INTENTISY_DECAY = 0.2f; // alpha[0;1] / s
+
+// ****************
+// *   Missiles   *
+// ****************
+
 constexpr const float MISSILE_SPEED = 450.0f; // m/s
 constexpr const float MISSILE_TARGET_ERROR_MARGIN = 10.0f; // m
+constexpr const float MISSILE_SIZE = 10.0f; // m
+#define MISSILE_COLOR COLOR(255, 255, 0)
+
+// ********************
+// *   Camera Shake   *
+// ********************
 
 constexpr const float SHAKING_INTENSITY = 10.0f; // m
 constexpr const float SHAKING_DECAY_FACTOR = 0.9f;
 constexpr const float SHAKING_SPREAD_ANGLE = 60.0f; // °
 constexpr const Duration SHAKING_UPDATE_INTERVAL = Duration(std::chrono::milliseconds(20));
 
+// ******************
+// *   Explosions   *
+// ******************
+
 constexpr const float EXPLOSION_MAX_RADIUS = 100.0f; // m
 constexpr const float EXPLOSION_EXPANSION_RATE = 300.0f; // m/s
 #define EXPLOSION_COLOR_START COLOR(242, 248, 100)
-#define EXPLOSION_COLOR_END COLOR(182, 45, 12)
+
+constexpr const std::array EXPLOSION_COLOR_ENDS = {
+    glm::vec3{COLOR(182, 45, 12)},
+    glm::vec3{COLOR(208, 98, 34)},
+    glm::vec3{COLOR(215, 164, 55)},
+};
+
+constexpr const std::array EXPLOSION_VERTICES = []{
+    constexpr const glm::vec2 CANVAS_SIZE{100.0f, 100.0f};
+
+    constexpr const glm::vec2 V1  {41.0f, 2.0f};
+    constexpr const glm::vec2 V2  {37.0f, 23.0f};
+    constexpr const glm::vec2 V3  {52.0f, 22.0f};
+    constexpr const glm::vec2 V4  {34.0f, 64.0f};
+    constexpr const glm::vec2 V5  {73.0f, 55.0f};
+    constexpr const glm::vec2 V6  {71.0f, 31.0f};
+    constexpr const glm::vec2 V7  {72.0f, 14.0f};
+    constexpr const glm::vec2 V8  {92.0f, 37.0f};
+    constexpr const glm::vec2 V9  {59.0f, 73.0f};
+    constexpr const glm::vec2 V10 {79.0f, 66.0f};
+    constexpr const glm::vec2 V11 {52.0f, 84.0f};
+    constexpr const glm::vec2 V12 {26.0f, 74.0f};
+    constexpr const glm::vec2 V13 {29.0f, 60.0f};
+    constexpr const glm::vec2 V14 {20.0f, 47.0f};
+    constexpr const glm::vec2 V15 {15.0f, 63.0f};
+    constexpr const glm::vec2 V16 {23.0f, 20.0f};
+    constexpr const glm::vec2 V17 {12.0f, 38.0f};
+
+    auto vertices = std::array{
+        V1,  V2,  V3,
+        V2,  V3,  V4,
+        V3,  V4,  V5,
+        V3,  V5,  V6,
+        V3,  V6,  V7,
+        V5,  V6,  V8,
+        V4,  V5,  V9,
+        V5,  V9,  V10,
+        V9,  V11, V12,
+        V4,  V9,  V12,
+        V2,  V4,  V13,
+        V2,  V13, V14,
+        V13, V14, V15,
+        V2,  V14, V16,
+        V14, V16, V17,
+    };
+
+    for (auto& vertex : vertices) {
+        vertex -= CANVAS_SIZE / 2.0f;
+        vertex /= CANVAS_SIZE / 2.0f;
+    }
+
+    return vertices;
+}();

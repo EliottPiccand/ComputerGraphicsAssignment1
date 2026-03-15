@@ -23,6 +23,9 @@ void Missile::update(float deltaTime, Input &input, const Camera &camera, EventH
 
 void Missile::render() const
 {
-    glColor3f(1.0, 1.0, 0.0);
-    glRectf(position.x - 10.0f, position.y - 10.0f, position.x + 10.0f, position.y + 10.0f);
+    glColor3f(MISSILE_COLOR);
+    glPointSize(MISSILE_SIZE);
+    glBegin(GL_POINTS);
+        glVertex2f(position.x, position.y);
+    glEnd();
 }

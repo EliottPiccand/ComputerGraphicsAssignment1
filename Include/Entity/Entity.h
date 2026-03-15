@@ -10,7 +10,7 @@ namespace entity
 class Entity
 {
   public:
-    int id;
+    const int id;
 
     Entity(int id);
 

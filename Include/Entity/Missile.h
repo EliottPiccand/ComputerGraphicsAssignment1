@@ -13,7 +13,7 @@ class Missile : public Entity
 {
   private:
     glm::vec2 position;
-    glm::vec2 target;
+    const glm::vec2 target;
 
   public:
     Missile(int entityId, glm::vec2 position, glm::vec2 target);

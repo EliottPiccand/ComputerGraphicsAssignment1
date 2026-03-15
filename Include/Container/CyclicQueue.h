@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <optional>
 #include <stdexcept>
 
 template <typename T, size_t Size> class CyclicQueue
@@ -12,42 +11,42 @@ template <typename T, size_t Size> class CyclicQueue
 
   private:
     std::array<T, Size> data;
-    size_t cursor; // Points to the next position to write
-    size_t m_size; // Number of elements in the queue
+    size_t cursor; // index of the next element
+    size_t elementCount;
 
   public:
-    CyclicQueue() : cursor(0), m_size(0)
+    CyclicQueue() : cursor(0), elementCount(0)
     {
     }
 
     void pushFront(T value)
     {
-        if (m_size == Size)
+        if (elementCount == Size)
         {
-            throw std::runtime_error("CyclicQueue out of size");
+            throw std::runtime_error("CyclicQueue elementCount overflowed Size");
         }
 
         data[cursor] = value;
         cursor = (cursor + 1) % Size;
-        m_size = std::min(m_size + 1, Size);
+        elementCount = std::min(elementCount + 1, Size);
     }
 
     void popBack()
     {
-        if (m_size > 0)
+        if (elementCount > 0)
         {
-            m_size -= 1;
+            elementCount -= 1;
         }
     }
 
     size_t size()
     {
-        return m_size;
+        return elementCount;
     }
 
-    T &front()
+    [[nodiscard]] T &front()
     {
-        if (m_size == 0)
+        if (elementCount == 0)
         {
             throw std::runtime_error("Cannot get the front of an empty queue");
         }
@@ -55,14 +54,14 @@ template <typename T, size_t Size> class CyclicQueue
         return data[(cursor + Size - 1) % Size];
     }
 
-    T &back()
+    [[nodiscard]] T &back()
     {
-        if (m_size == 0)
+        if (elementCount == 0)
         {
             throw std::runtime_error("Cannot get the back of an empty queue");
         }
 
-        return data[(cursor + Size - m_size) % Size];
+        return data[(cursor + Size - elementCount) % Size];
     }
 
     class Iterator
@@ -100,20 +99,73 @@ template <typename T, size_t Size> class CyclicQueue
         }
     };
 
+    class ConstIterator
+    {
+      private:
+        const CyclicQueue *queue;
+        size_t index;
+        size_t remaining;
+
+      public:
+        ConstIterator(const CyclicQueue *q, size_t start, size_t remaining)
+            : queue(q), index(start), remaining(remaining)
+        {
+        }
+
+        const T &operator*()
+        {
+            return queue->data[index];
+        }
+
+        ConstIterator &operator++()
+        {
+            if (remaining == 0)
+            {
+                throw std::runtime_error("Iterator out of bounds");
+            }
+
+            index = (index + 1) % Size;
+            remaining -= 1;
+            return *this;
+        }
+
+        bool operator!=(ConstIterator &other)
+        {
+            return remaining != other.remaining;
+        }
+    };
+
     Iterator begin()
     {
-        if (m_size == 0)
+        if (elementCount == 0)
         {
             return end();
         }
 
-        size_t start = (cursor + Size - m_size) % Size;
-        return Iterator(this, start, m_size);
+        size_t start = (cursor + Size - elementCount) % Size;
+        return Iterator(this, start, elementCount);
     }
 
     Iterator end()
     {
-        size_t start = (cursor + Size - m_size) % Size;
+        size_t start = (cursor + Size - elementCount) % Size;
         return Iterator(this, start, 0);
+    }
+
+    const ConstIterator begin() const
+    {
+        if (elementCount == 0)
+        {
+            return end();
+        }
+
+        size_t start = (cursor + Size - elementCount) % Size;
+        return ConstIterator(this, start, elementCount);
+    }
+
+    const ConstIterator end() const
+    {
+        size_t start = (cursor + Size - elementCount) % Size;
+        return ConstIterator(this, start, 0);
     }
 };

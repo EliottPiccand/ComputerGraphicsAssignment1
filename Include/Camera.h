@@ -28,5 +28,5 @@ class Camera
 
     void shake();
 
-    glm::vec2 toWorldPosition(const glm::vec2 &position) const;
+    [[nodiscard]] glm::vec2 toWorldPosition(const glm::vec2 &position) const;
 };

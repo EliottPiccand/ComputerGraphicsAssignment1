@@ -10,5 +10,5 @@ class Random
 
   public:
     static void initialize();
-    static float random(float min, float max);
+    [[nodiscard]] static float random(float min, float max);
 };

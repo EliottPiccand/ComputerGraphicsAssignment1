@@ -12,7 +12,7 @@ class EventHandler
     std::vector<std::unique_ptr<event::Event>> events;
 
   public:
-    std::vector<std::unique_ptr<event::Event>> popAll();
+    [[nodiscard]] std::vector<std::unique_ptr<event::Event>> popAll();
 
     template <std::derived_from<event::Event> EventType, typename... Args> void post(Args... args)
     {

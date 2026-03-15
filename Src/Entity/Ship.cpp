@@ -3,7 +3,6 @@
 #include <limits>
 
 #include "Event.h"
-#include "GL.h"
 #include "Utils/Math.h"
 #include "World.h"
 

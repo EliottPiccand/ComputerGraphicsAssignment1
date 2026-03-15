@@ -8,6 +8,7 @@
 #include "Event.h"
 #include "Utils/Constants.h"
 #include "Utils/Random.h"
+#include "World.h"
 
 Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 {
@@ -38,7 +39,7 @@ void Application::run()
 
 bool Application::deleteEntity(int entityId)
 {
-    auto it = std::find_if(entities.begin(), entities.end(), [entityId](auto e) { return e->id == entityId; });
+    const auto it = std::find_if(entities.begin(), entities.end(), [entityId](auto e) { return e->id == entityId; });
 
     if (it != entities.end())
     {

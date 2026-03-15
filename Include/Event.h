@@ -12,23 +12,23 @@ struct Event
 
 struct FireEvent : public Event
 {
-    glm::vec2 start;
-    glm::vec2 target;
+    const glm::vec2 start;
+    const glm::vec2 target;
 
     FireEvent(glm::vec2 &start, glm::vec2 &target);
 };
 
 struct TargetReachedEvent : public Event
 {
-    int entityId;
-    glm::vec2 position;
+    const int entityId;
+    const glm::vec2 position;
 
     TargetReachedEvent(int entityId, glm::vec2 position);
 };
 
 struct ExplosionDoneEvent : public Event
 {
-    int entityId;
+    const int entityId;
 
     ExplosionDoneEvent(int entityId);
 };

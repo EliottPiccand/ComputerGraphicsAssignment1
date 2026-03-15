@@ -13,7 +13,7 @@ namespace entity
 
 class Ship : public Entity
 {
-  public:
+  private:
     enum class SpeedState
     {
         Forward,
@@ -21,7 +21,6 @@ class Ship : public Entity
         Backward,
     };
 
-  private:
     glm::vec2 position;
     float orientation;
     SpeedState speedState;
@@ -36,7 +35,7 @@ class Ship : public Entity
         float intensity;
     };
 
-    mutable CyclicQueue<TrailParticle, MAX_TRAIL_PARTICLES> trailParticles;
+    CyclicQueue<TrailParticle, MAX_TRAIL_PARTICLES> trailParticles;
 
   public:
     Ship(int id, glm::vec2 position, float orientation, Input &input);
