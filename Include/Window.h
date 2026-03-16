@@ -25,6 +25,12 @@ class Window
     GLFWwindow *handle;
     std::unique_ptr<CallbackData> user_data;
 
+    int nonFullscreenPositionX;
+    int nonFullscreenPositionY;
+    int nonFullscreenWidth;
+    int nonFullscreenHeight;
+    bool isFullScreen;
+
   public:
     Window(uint16_t width, uint16_t height, const char *title, PFN_ResizeCallback resizeCallback);
     ~Window();
@@ -33,4 +39,5 @@ class Window
     void endFrame() const;
 
     void setTitle(std::string title) const;
+    void toggleFullscreen();
 };

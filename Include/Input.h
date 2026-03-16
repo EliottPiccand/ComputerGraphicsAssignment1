@@ -16,6 +16,7 @@ class Input
         TurnRight,
         Fire,
         CancelFire,
+        ToggleFullScreen,
     };
 
     enum class State

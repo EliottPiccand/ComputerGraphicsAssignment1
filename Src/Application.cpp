@@ -6,6 +6,7 @@
 #include "Entity/Missile.h"
 #include "Entity/Ship.h"
 #include "Event.h"
+#include "Input.h"
 #include "Utils/Constants.h"
 #include "Utils/Random.h"
 #include "World.h"
@@ -17,7 +18,9 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
                                       [this](uint32_t width, uint32_t height) { onResize(width, height); });
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     input.initialize(*window);
+    input.bindKey(Input::Action::ToggleFullScreen, GLFW_KEY_F11);
 
     nextEntityId = 0;
     newEntity<entity::Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input);
@@ -80,6 +83,10 @@ void Application::update(float deltaTime)
         {
             deleteEntity(event->entityId);
         }
+    }
+
+    if (input[Input::Action::ToggleFullScreen] == Input::State::JustReleased) {
+        window->toggleFullscreen();
     }
 
     camera.update();

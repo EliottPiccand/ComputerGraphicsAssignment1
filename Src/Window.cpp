@@ -1,5 +1,8 @@
 #include "Window.h"
+#include "GLFW/glfw3.h"
 
+#include <cassert>
+#include <cstddef>
 #include <format>
 #include <stdexcept>
 
@@ -10,6 +13,7 @@ static void glfwErrorCallback(int code, const char *description)
 }
 
 Window::Window(uint16_t width, uint16_t height, const char *title, PFN_ResizeCallback resizeCallback)
+    : isFullScreen(false)
 {
     glfwSetErrorCallback(glfwErrorCallback);
     glfwInit();
@@ -45,4 +49,54 @@ void Window::endFrame() const
 void Window::setTitle(std::string title) const
 {
     glfwSetWindowTitle(handle, title.c_str());
+}
+
+void Window::toggleFullscreen()
+{
+    isFullScreen = !isFullScreen;
+
+    if (isFullScreen)
+    {
+        // get current monitor
+        GLFWmonitor *currentMonitor = nullptr;
+
+        int currentWindowX, currentWindowY;
+        glfwGetWindowPos(handle, &currentWindowX, &currentWindowY);
+
+        int count;
+        GLFWmonitor **monitors = glfwGetMonitors(&count);
+        for (size_t i = 0; i < count; i++)
+        {
+            int monitorX, monitorY, width, height;
+            glfwGetMonitorWorkarea(monitors[i], &monitorX, &monitorY, &width, &height);
+
+            if ((monitorX <= currentWindowX && currentWindowX < monitorX + width) &&
+                (monitorY <= currentWindowY && currentWindowY < monitorY + height))
+            {
+                currentMonitor = monitors[i];
+                break;
+            }
+        }
+
+        assert(currentMonitor != nullptr && "failed to retrive current monitor");
+
+        // save current state
+        int width, height;
+        glfwGetWindowSize(handle, &width, &height);
+
+        nonFullscreenPositionX = currentWindowX;
+        nonFullscreenPositionY = currentWindowY;
+        nonFullscreenWidth = width;
+        nonFullscreenHeight = height;
+
+        // set fullscreen
+        const GLFWvidmode *videoMode = glfwGetVideoMode(currentMonitor);
+        assert(videoMode != nullptr && "failed to retrieve current video mode");
+
+        glfwSetWindowMonitor(handle, currentMonitor, 0, 0, videoMode->width, videoMode->height, videoMode->refreshRate);
+    }
+    else
+    {
+        glfwSetWindowMonitor(handle, nullptr, nonFullscreenPositionX, nonFullscreenPositionY, nonFullscreenWidth, nonFullscreenHeight, GLFW_DONT_CARE);
+    }
 }
