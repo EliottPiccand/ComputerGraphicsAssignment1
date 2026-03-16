@@ -8,6 +8,7 @@
 #include "GL.h"
 #include "Input.h"
 #include "Utils/Constants.h"
+#include "World.h"
 
 namespace entity
 {
@@ -23,7 +24,7 @@ class Explosion : public Entity
   public:
     Explosion(int entityId, const glm::vec2 &position);
 
-    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events) override;
+    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world) override;
     void render() const override;
 };
 

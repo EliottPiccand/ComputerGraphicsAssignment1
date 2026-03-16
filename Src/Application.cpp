@@ -9,7 +9,6 @@
 #include "Input.h"
 #include "Utils/Constants.h"
 #include "Utils/Random.h"
-#include "World.h"
 
 Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 {
@@ -18,7 +17,7 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
                                       [this](uint32_t width, uint32_t height) { onResize(width, height); });
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     input.initialize(*window);
     input.bindKey(Input::Action::ToggleFullScreen, GLFW_KEY_F11);
 
@@ -85,16 +84,19 @@ void Application::update(float deltaTime)
         }
     }
 
-    if (input[Input::Action::ToggleFullScreen] == Input::State::JustReleased) {
+    if (input[Input::Action::ToggleFullScreen] == Input::State::JustReleased)
+    {
         window->toggleFullscreen();
     }
 
     camera.update();
 
+    world.update(deltaTime);
+
     // Update entities
     for (auto &entity : entities)
     {
-        entity->update(deltaTime, input, camera, events);
+        entity->update(deltaTime, input, camera, events, world);
     }
 }
 
@@ -104,7 +106,7 @@ void Application::render() const
     glClear(GL_COLOR_BUFFER_BIT);
 
     camera.render();
-    World::render();
+    world.render();
 
     for (const auto &entity : entities)
     {

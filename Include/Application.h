@@ -12,6 +12,7 @@
 #include "Input.h"
 #include "Utils/Time.h"
 #include "Window.h"
+#include "World.h"
 
 class Application
 {
@@ -25,6 +26,7 @@ class Application
 
     Camera camera;
 
+    World world;
     int nextEntityId;
     std::vector<std::shared_ptr<entity::Entity>> entities;
 

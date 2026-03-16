@@ -5,6 +5,7 @@
 #include "EventHandler.h"
 #include "GL.h"
 #include "Input.h"
+#include "World.h"
 
 namespace entity
 {
@@ -18,7 +19,7 @@ class Missile : public Entity
   public:
     Missile(int entityId, glm::vec2 position, glm::vec2 target);
 
-    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events) override;
+    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world) override;
     void render() const override;
 };
 

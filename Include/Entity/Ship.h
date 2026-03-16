@@ -7,6 +7,7 @@
 #include "GL.h"
 #include "Input.h"
 #include "Utils/Constants.h"
+#include "World.h"
 
 namespace entity
 {
@@ -40,7 +41,7 @@ class Ship : public Entity
   public:
     Ship(int id, glm::vec2 position, float orientation, Input &input);
 
-    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events) override;
+    void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world) override;
     void render() const override;
 };
 

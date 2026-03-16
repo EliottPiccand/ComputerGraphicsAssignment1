@@ -23,7 +23,7 @@ Explosion::Explosion(int entityId, const glm::vec2 &position)
 {
 }
 
-void Explosion::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events)
+void Explosion::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world)
 {
     radius += EXPLOSION_EXPANSION_RATE * deltaTime;
     if (radius > EXPLOSION_MAX_RADIUS)
@@ -50,8 +50,8 @@ void Explosion::render() const
         glRotatef(rotation, 0.0f, 0.0f, 1.0f);
         glScalef(scaleFactor, scaleFactor, 1.0f);
 
-        const glm::vec3 color = lerp(glm::vec3(EXPLOSION_COLOR_START), baseColor, t);
-        glColor3f(color.x, color.y, color.y);
+        const glm::vec3 color = lerp(EXPLOSION_COLOR_START, baseColor, t);
+        glColor3f(color.r, color.g, color.b);
 
         glBegin(GL_TRIANGLES);
         for (const auto &vertex : EXPLOSION_VERTICES)

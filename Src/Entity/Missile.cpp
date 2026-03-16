@@ -10,7 +10,7 @@ Missile::Missile(int entityId, glm::vec2 position, glm::vec2 target)
 {
 }
 
-void Missile::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events)
+void Missile::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world)
 {
     const glm::vec2 direction = glm::normalize(target - position);
     position += direction * deltaTime * MISSILE_SPEED;
@@ -18,6 +18,7 @@ void Missile::update(float deltaTime, Input &input, const Camera &camera, EventH
     if (glm::length(position - target) < MISSILE_TARGET_ERROR_MARGIN)
     {
         events.post<event::TargetReachedEvent>(id, target);
+        world.moveWater(target, EXPLOSION_MAX_RADIUS * 0.5f);
     }
 }
 

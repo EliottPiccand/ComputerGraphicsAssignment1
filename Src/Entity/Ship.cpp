@@ -3,9 +3,7 @@
 #include <limits>
 
 #include "Event.h"
-#include "GL.h"
 #include "Utils/Math.h"
-#include "World.h"
 
 using namespace entity;
 
@@ -37,7 +35,7 @@ Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
     input.bindMouseButton(Input::Action::CancelFire, GLFW_MOUSE_BUTTON_RIGHT);
 }
 
-void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events)
+void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world)
 {
     bool boundingBoxUpdated = false;
 
@@ -126,7 +124,7 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
     // Collisions
     if (boundingBoxUpdated)
     {
-        World::checkCollision(position, orientation);
+        world.checkCollision(position, orientation);
     }
 
     // Target
@@ -162,6 +160,8 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
             .position = position,
             .intensity = 1.0f,
         });
+
+        world.moveWater(position, glm::length(SHIP_SCALE) * 0.2f);
     }
 }
 
@@ -170,7 +170,7 @@ void Ship::render() const
     // Trail
     for (const auto &particle : trailParticles)
     {
-        glColor4f(TRAIL_COLOR, particle.intensity / 4.0f);
+        glColor4f(FOAM_COLOR, particle.intensity / 4.0f);
         glPointSize(lerp(TRAIL_MAX_SIZE, TRAIL_MIN_SIZE, particle.intensity));
         glBegin(GL_POINTS);
         glVertex2f(particle.position.x, particle.position.y);
