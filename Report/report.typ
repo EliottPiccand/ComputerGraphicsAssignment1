@@ -156,7 +156,7 @@ Since the only collision that can occur in the game is the one against the world
 
 === Aim & Fire
 During the Ship entity update method, the program check for mouse input using the input system. Depending on the buttons' states, the ship target position and a flag indicating whether the player is aiming are updated.
-Then, if the player is aiming and the left button is released, a `FireEvent` is sent to the event system, which will spawn an new missile entity on the next frame.
+Then, if the player is aiming (see @fig:aim) and the left button is released, a `FireEvent` is sent to the event system, which will spawn an new missile entity on the next frame.
 
 === Travel
 Each missile move the same way the ship does but user inputs cannot update its speed nor its direction. Missiles flight in a straight line, until they are close enough#footnote[because position are floating point numbers and time steps are discrete trying to check if the missile reach the exact target position will always fail. Instead, the program check if the distance between the missile and the target is near $0$ (configurable with the `MISSILE_TARGET_ERROR_MARGIN` constant)] to their target, at which point they trigger a `TargetReachedEvent` which delete the missile entity, and spawn a new explosion entity. Finally, missiles are rendered as a simple point primitive (`GL_POINT`), so rotation and scaling does not impact them. Thus, we did not use any transformation matrices and simply create a vertex at the missile position, setting its size by changing OpenGL point size with `glPointSize(float radius)` (see @fig:fire-missile).
@@ -216,20 +216,27 @@ On triggering the `TargetReachedEvent`, the camera start shaking. This is done b
 To display the ship foam trail (see @fig:foam-trail), we decided to store the ship position at regular interval#footnote[We implemented that using a cyclic queue data structure - since there is only a limited amount of position needed each frame - to avoid allocating memory each frame.], and to display a point (`GL_POINTS` primitive) on each of those positions, with a different size and opacity depending on how long the position has been stored.
 
 = End-user guide
-The game starts immediately on running the executable. The player can change the ship speed with the `W` and `S` keys (respectively increasing and decreasing the boat speed), and rotate it using the `A` and `D` keys (turing the boat respectively left and right by 15°). In addition, the player can shoot missiles with his mouse : pressing the left click enable aiming mode which displays a ray toward the target. In aiming mode, 2 actions ar possible : cancel fire by clicking (press and release) the right click, or fire by releasing the left click.
+The game starts immediately on running the executable. The player can change the ship speed with the `W` and `S` keys (respectively increasing and decreasing the boat speed), and rotate it using the `A` and `D` keys (turing the boat respectively left and right by 15°). In addition, the player can shoot missiles with his mouse : pressing the left click enable aiming mode which displays a ray toward the target. In aiming mode, 2 actions ar possible : cancel fire by clicking (press and release) the right click, or fire by releasing the left click. Fullscreen can be toggle by clicking the F11 key.
+
+#let imageWidth = 94%;
 
 #figure(
-  image("Images/Missile.png"),
-  caption: [Ship firing a missile (the yellow point)]
+  image("Images/Aim.png", width: imageWidth),
+  caption: [Ship aiming (target at the end of the dashed line)]
+) <fig:aim>
+
+#figure(
+  image("Images/Missile.png", width: imageWidth),
+  caption: [Ship firing a missile (the yellow point, target at the end of the dashed line)]
 ) <fig:fire-missile>
 
 #figure(
-  image("Images/FoamTrail.png"),
+  image("Images/FoamTrail.png", width: imageWidth),
   caption: [Ship with its foam trail behind]
 ) <fig:foam-trail>
 
 #figure(
-  image("Images/Explosion.png"),
+  image("Images/Explosion.png", width: imageWidth),
   caption: [Final stage of the missile's explosion]
 ) <fig:explosion>
 
