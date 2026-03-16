@@ -58,6 +58,9 @@ constexpr const std::array SHIP_TURRET_VERTICES = std::array{
     glm::vec2( 0.0f ,  0.2f), // Top
 };
 
+#define AIM_RAY_COLOR COLOR(255, 0, 0)
+constexpr const GLfloat AIM_RAY_WIDTH = 3.0f;
+
 // ***********************
 // *   Ship Foam Trail   *
 // ***********************
@@ -77,6 +80,9 @@ constexpr const float MISSILE_SPEED = 450.0f; // m/s
 constexpr const float MISSILE_TARGET_ERROR_MARGIN = 10.0f; // m
 constexpr const float MISSILE_SIZE = 10.0f; // m
 #define MISSILE_COLOR COLOR(255, 255, 0)
+
+#define MISSILE_RAY_COLOR COLOR(255, 0, 255)
+constexpr const GLfloat MISSILE_RAY_WIDTH = 2.0f;
 
 // ********************
 // *   Camera Shake   *

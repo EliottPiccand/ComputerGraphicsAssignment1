@@ -3,6 +3,7 @@
 #include <limits>
 
 #include "Event.h"
+#include "GL.h"
 #include "Utils/Math.h"
 #include "World.h"
 
@@ -218,11 +219,19 @@ void Ship::render() const
     // Target
     if (aiming && aimingValidPosition)
     {
-        glColor3f(1.0, 0.0, 0.0);
-        glLineWidth(3.0);
+        glPushAttrib(GL_ENABLE_BIT);
+
+        glLineStipple(1, 0xFF00);
+        glEnable(GL_LINE_STIPPLE);
+
+        glColor3f(AIM_RAY_COLOR);
+        glLineWidth(AIM_RAY_WIDTH);
+
         glBegin(GL_LINES);
-        glVertex2f(position.x, position.y);
-        glVertex2f(targetPosition.x, targetPosition.y);
+            glVertex2f(position.x, position.y);
+            glVertex2f(targetPosition.x, targetPosition.y);
         glEnd();
+
+        glPopAttrib();
     }
 }

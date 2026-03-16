@@ -23,9 +23,26 @@ void Missile::update(float deltaTime, Input &input, const Camera &camera, EventH
 
 void Missile::render() const
 {
+    // Missile
     glColor3f(MISSILE_COLOR);
     glPointSize(MISSILE_SIZE);
     glBegin(GL_POINTS);
         glVertex2f(position.x, position.y);
     glEnd();
+
+    // Ray
+    glPushAttrib(GL_ENABLE_BIT);
+
+    glLineStipple(1, 0xFF00);
+    glEnable(GL_LINE_STIPPLE);
+
+    glColor3f(MISSILE_RAY_COLOR);
+    glLineWidth(MISSILE_RAY_WIDTH);
+
+    glBegin(GL_LINES);
+        glVertex2f(position.x, position.y);
+        glVertex2f(target.x, target.y);
+    glEnd();
+
+    glPopAttrib();
 }
