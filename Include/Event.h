@@ -15,7 +15,7 @@ struct FireEvent : public Event
     const glm::vec2 start;
     const glm::vec2 target;
 
-    FireEvent(glm::vec2 &start, glm::vec2 &target);
+    FireEvent(const glm::vec2 &start, const glm::vec2 &target);
 };
 
 struct TargetReachedEvent : public Event
@@ -23,7 +23,7 @@ struct TargetReachedEvent : public Event
     const int entityId;
     const glm::vec2 position;
 
-    TargetReachedEvent(int entityId, glm::vec2 position);
+    TargetReachedEvent(int entityId, const glm::vec2 &position);
 };
 
 struct ExplosionDoneEvent : public Event

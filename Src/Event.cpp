@@ -2,11 +2,11 @@
 
 using namespace event;
 
-FireEvent::FireEvent(glm::vec2 &start, glm::vec2 &target) : start(start), target(target)
+FireEvent::FireEvent(const glm::vec2 &start, const glm::vec2 &target) : start(start), target(target)
 {
 }
 
-TargetReachedEvent::TargetReachedEvent(int entityId, glm::vec2 position) : entityId(entityId), position(position)
+TargetReachedEvent::TargetReachedEvent(int entityId, const glm::vec2 &position) : entityId(entityId), position(position)
 {
 }
 
