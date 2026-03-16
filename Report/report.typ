@@ -87,6 +87,7 @@ Our program contains several features, including :
 - missiles aim, fire, travel and explosion;
 - camera shaking on explosions;
 - ship trail;
+- water waves simulation;
 
 and some features not visible by the players, but useful for development :
 - entity system (inheritance based); 
@@ -116,13 +117,18 @@ To summarize how our program works, we can use the following pseudo-code (see @a
 
             LineBreak
 
-            Comment[processes all events that occurred during the last frame]
+            Comment[update the different elements of the game]
+            Call.with("Update-Camera")[]()
+            Call.with("Update-World")[]()
             Call.with("Update-Entities")[]()
 
             LineBreak
 
             Comment[render everything (this is a constant function, no update occurs here)]
-            Call.with("Render")[]()
+            Call.with("Render-Camera")[]()
+            Call.with("Render-World")[]()
+            Call.with("Render-Entities")[]()
+
 
             LineBreak
 
@@ -215,6 +221,9 @@ On triggering the `TargetReachedEvent`, the camera start shaking. This is done b
 == Ship Trail
 To display the ship foam trail (see @fig:foam-trail), we decided to store the ship position at regular interval#footnote[We implemented that using a cyclic queue data structure - since there is only a limited amount of position needed each frame - to avoid allocating memory each frame.], and to display a point (`GL_POINTS` primitive) on each of those positions, with a different size and opacity depending on how long the position has been stored.
 
+== Water Waves simulation
+After all those features we still found the game looks flat, especially because of the water background. However, since we were not allowed to use textures nor shaders, we opted for a simulated background. We divided the world into rectangles of 8m $times$ 8m, associated a water height to each of these cell, and performed a simple simulation, inspired by the damped wave equation#footnote[Our implementation is not the real discrete damped wave equation simulation, but a simplified version  aiming to recreate its global behavior without diving into complex mathematics and physics.]. Thus the boat motion (see @fig:ship-waves) and missiles (see @fig:missile-waves) now interact dynamically with the surrounding water, creating waves and interferences patterns. However, adding this feature cost a lot of performances#footnote[This cost is not due to the simulation but by how we render the plane. Drawing a lot (15,625) rectangles with OpenGL immediate rendering result in a lot of draw calls and should be implemented through a shader instead], decreasing the framerate from \~3000 to \~75 frames per seconds.
+
 = End-user guide
 The game starts immediately on running the executable. The player can change the ship speed with the `W` and `S` keys (respectively increasing and decreasing the boat speed), and rotate it using the `A` and `D` keys (turing the boat respectively left and right by 15°). In addition, the player can shoot missiles with his mouse : pressing the left click enable aiming mode which displays a ray toward the target. In aiming mode, 2 actions ar possible : cancel fire by clicking (press and release) the right click, or fire by releasing the left click. Fullscreen can be toggle by clicking the F11 key.
 
@@ -237,14 +246,25 @@ The game starts immediately on running the executable. The player can change the
 
 #figure(
   image("Images/Explosion.png", width: imageWidth),
-  caption: [Final stage of the missile's explosion]
+  caption: [Final stage of the missile's explosion animation]
 ) <fig:explosion>
+
+#figure(
+  image("Images/ShipWaves.png", width: imageWidth),
+  caption: [Waves in the water caused by the ship movement]
+) <fig:ship-waves>
+
+#figure(
+  image("Images/MissileWaves.png", width: imageWidth),
+  caption: [Waves in the water after a missile explosion]
+) <fig:missile-waves>
 
 = Discussions/Conclusions
 During the development, we didn't encountered much issued. However, we had to learn how to use some OpenGL functions such as `glPushMatrix()` and `glPopMatrix()` to make every model matrices properly bind to the right vertices. Moreover, we had to use AI for one part of the code since we didn't find a good tutorial explaining how to implement this feature, but this is more a C++ issue than a Graphics Computing one (see the later section about this topic)
 
 = References
 Every part of the code is original, but the camera shaking part mechanic is greatly inspired by #link("https://gamedev.stackexchange.com/a/47565")[\@miklatov answer on this Stack Exchange discussion].
+Also the water simulation part was inspired by the introduction of #link("https://www.slembcke.net/blog/WaterWaves/")[this post by Scott Lembcke].
 
 = AI-assisted coding references <sec:ai>
 The only part of this program where AI was used was to make the custom `CyclicQueue` iterable. So `CyclicQueue::Iterator`, `CyclicQueue::begin()` and `CyclicQueue::end()` were generated using an LLM.

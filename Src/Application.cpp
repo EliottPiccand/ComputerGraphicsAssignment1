@@ -30,6 +30,9 @@ void Application::run()
     while (!window->shouldClose())
     {
         const float deltaTime = clock.tick();
+        if (deltaTime > 1.0f) {
+            continue;
+        }
 
         input.update();
         update(deltaTime);
