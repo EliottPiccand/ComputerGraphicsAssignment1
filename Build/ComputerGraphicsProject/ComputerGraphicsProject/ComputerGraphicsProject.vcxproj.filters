@@ -75,6 +75,9 @@
     <ClCompile Include="..\..\..\Src\Entity\Ship.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Src\Entity\Obstacle.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Application.h">
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Include\Container\CyclicQueue.h">
       <Filter>Header Files\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Entity\Obstacle.h">
+      <Filter>Header Files\Entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
