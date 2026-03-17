@@ -4,6 +4,7 @@
 
 #include "Entity/Explosion.h"
 #include "Entity/Missile.h"
+#include "Entity/Obstacle.h"
 #include "Entity/Ship.h"
 #include "Event.h"
 #include "Input.h"
@@ -23,6 +24,27 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
 
     nextEntityId = 0;
     newEntity<entity::Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input);
+
+    constexpr float OBSTACLE_SPAWN_MARGIN = 120.0f;
+    constexpr float OBSTACLE_CENTER_EXCLUSION_RADIUS = 260.0f;
+    const int obstacleCount = static_cast<int>(Random::random(1.0f, 3.999f));
+    for (int i = 0; i < obstacleCount; ++i)
+    {
+        glm::vec2 obstaclePosition{};
+        int attempts = 0;
+        do
+        {
+            obstaclePosition = {
+                Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_WIDTH - OBSTACLE_SPAWN_MARGIN),
+                Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_HEIGHT - OBSTACLE_SPAWN_MARGIN),
+            };
+            attempts += 1;
+        } while (glm::length(obstaclePosition - SHIP_DEFAULT_POSITION) < OBSTACLE_CENTER_EXCLUSION_RADIUS &&
+                 attempts < 50);
+
+        const auto obstacle = newEntity<entity::Obstacle>(obstaclePosition);
+        world.addObstacle(obstacle->getPosition(), obstacle->getOrientation(), obstacle->getWidth(), obstacle->getDepth());
+    }
 }
 
 void Application::run()

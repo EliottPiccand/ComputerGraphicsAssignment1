@@ -1,7 +1,5 @@
 #include "Entity/Explosion.h"
 
-#include <ranges>
-
 #include "Event.h"
 #include "Utils/Math.h"
 #include "Utils/Random.h"
@@ -41,9 +39,10 @@ void Explosion::render() const
     glLoadIdentity();
     glTranslatef(position.x, position.y, 0.0f);
 
-    for (const auto &[layerIndex, data] : std::views::enumerate(std::views::zip(layerRotations, EXPLOSION_COLOR_ENDS)))
+    for (size_t layerIndex = 0; layerIndex < layerRotations.size(); ++layerIndex)
     {
-        const auto &[rotation, baseColor] = data;
+        const float rotation = layerRotations[layerIndex];
+        const glm::vec3 &baseColor = EXPLOSION_COLOR_ENDS[layerIndex];
         const float scaleFactor = radius / static_cast<float>(1 << layerIndex);
 
         glPushMatrix();
