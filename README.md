@@ -11,3 +11,9 @@ To build the game, you need to :
 - set the include directory to `Includes`
 - link against every lib inside `Lib`
 - enable C++23 features
+
+With CMake : 
+```cmd
+cmake -S . -B ./Build/CMake -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build ./Build/CMake
+```
