@@ -1,53 +1,23 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(ComputerGraphicsProject LANGUAGES CXX)
+set(PROJECT_NAME ComputerGraphics)
+set(EXECUTABLE_NAME main)
+set(BUILD_DIR "${CMAKE_SOURCE_DIR}/Build/CMake")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+project(${PROJECT_NAME} LANGUAGES CXX VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/Src/*.cpp"
-)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp)
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Include)
 
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-        "${CMAKE_SOURCE_DIR}/Include"
-)
+file(GLOB LIBS Lib/*.lib)
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${LIBS})
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE OpenGL32)
 
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-            "${CMAKE_SOURCE_DIR}/Lib/glfw3.lib"
-            "${CMAKE_SOURCE_DIR}/Lib/glew32.lib"
-            opengl32
-            user32
-            gdi32
-            shell32
-            glu32
-    )
-elseif(APPLE)
-    find_package(OpenGL REQUIRED)
-    find_package(glfw3 REQUIRED)
-    find_package(GLEW REQUIRED)
-
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-            OpenGL::GL
-            glfw
-            GLEW::GLEW
-    )
-else()
-    find_package(OpenGL REQUIRED)
-    find_package(glfw3 REQUIRED)
-    find_package(GLEW REQUIRED)
-
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-            OpenGL::GL
-            glfw
-            GLEW::GLEW
-    )
-endif()
+file(MAKE_DIRECTORY ${BUILD_DIR})
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
