@@ -160,3 +160,11 @@ constexpr const std::array EXPLOSION_VERTICES = []{
 
     return vertices;
 }();
+
+// *****************
+// *   Obstacles   *
+// *****************
+
+#define OBSTACLE_COLOR rgba(139, 69, 19, 1)
+constexpr float SHIP_OBSTACLE_CLEARANCE = 3.0f;
+constexpr size_t OBSTACLE_VERTEX_COUNT = 4;

@@ -1,88 +1,84 @@
 #include "World.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <limits>
 #include <ranges>
 
+#include "Utils/Constants.h"
 
 namespace
 {
-constexpr size_t SHIP_VERTEX_COUNT = SHIP_VERTICES.size();
-constexpr size_t OBSTACLE_VERTEX_COUNT = 4;
-constexpr float SHIP_OBSTACLE_CLEARANCE = 3.0f;
 
-std::array<glm::vec2, SHIP_VERTEX_COUNT> buildShipPolygon(const glm::vec2 &position, float orientation)
+std::array<glm::vec2, SHIP_VERTICES.size()> buildShipPolygon(const glm::vec2 &position, float orientation)
 {
-    std::array<glm::vec2, SHIP_VERTEX_COUNT> vertices{};
-    for (size_t i = 0; i < SHIP_VERTEX_COUNT; ++i)
+    std::array<glm::vec2, SHIP_VERTICES.size()> vertices;
+    for (auto &&[shipVertex, vertex] : std::views::zip(SHIP_VERTICES, vertices))
     {
-        auto tmp = SHIP_VERTICES[i];
-        vertices[i] = position + glm::rotate(tmp * SHIP_SCALE, glm::radians(orientation));
+        vertex = position + glm::rotate(shipVertex * SHIP_SCALE, glm::radians(orientation));
     }
+
     return vertices;
 }
 
 std::array<glm::vec2, OBSTACLE_VERTEX_COUNT> buildObstaclePolygon(const glm::vec2 &position, float orientation,
-                                                                  float width, float depth)
+                                                                  float width, float height)
 {
     const float halfWidth = width * 0.5f;
-    const float halfDepth = depth * 0.5f;
+    const float halfHeight = height * 0.5f;
 
-    const std::array<glm::vec2, OBSTACLE_VERTEX_COUNT> localVertices = {
-        glm::vec2{-halfWidth, -halfDepth},
-        glm::vec2{halfWidth, -halfDepth},
-        glm::vec2{halfWidth, halfDepth},
-        glm::vec2{-halfWidth, halfDepth},
+    const std::array localVertices = {
+        glm::vec2{-halfWidth, -halfHeight},
+        glm::vec2{halfWidth, -halfHeight},
+        glm::vec2{halfWidth, halfHeight},
+        glm::vec2{-halfWidth, halfHeight},
     };
 
-    std::array<glm::vec2, OBSTACLE_VERTEX_COUNT> worldVertices{};
-    for (size_t i = 0; i < OBSTACLE_VERTEX_COUNT; ++i)
+    std::array<glm::vec2, OBSTACLE_VERTEX_COUNT> worldVertices;
+    for (auto &&[worldVertex, localVertex] : std::views::zip(worldVertices, localVertices))
     {
-        auto tmp = localVertices[i];
-        worldVertices[i] = position + glm::rotate(tmp, glm::radians(orientation));
+        worldVertex = position + glm::rotate(localVertex, glm::radians(orientation));
     }
 
     return worldVertices;
 }
 
 template <size_t N>
-void projectPolygonOnAxis(const std::array<glm::vec2, N> &polygon, const glm::vec2 &axis, float &outMin, float &outMax)
+std::pair<float, float> projectPolygonOnAxis(const std::array<glm::vec2, N> &polygon, const glm::vec2 &axis)
 {
-    outMin = glm::dot(polygon[0], axis);
-    outMax = outMin;
-    for (size_t i = 1; i < N; ++i)
+    float outMin = std::numeric_limits<float>::max();
+    float outMax = std::numeric_limits<float>::min();
+
+    for (const auto &point : polygon)
     {
-        const float projection = glm::dot(polygon[i], axis);
+        const float projection = glm::dot(point, axis);
         outMin = std::min(outMin, projection);
         outMax = std::max(outMax, projection);
     }
+
+    return {outMin, outMax};
 }
 
 template <size_t N, size_t M>
 bool overlapOnAxis(const std::array<glm::vec2, N> &polygonA, const std::array<glm::vec2, M> &polygonB,
-                   const glm::vec2 &axis, float clearance)
+                   const glm::vec2 &axis)
 {
-    float minA, maxA, minB, maxB;
-    projectPolygonOnAxis(polygonA, axis, minA, maxA);
-    projectPolygonOnAxis(polygonB, axis, minB, maxB);
-    return !(maxA + clearance < minB || maxB + clearance < minA);
+    const auto [minA, maxA] = projectPolygonOnAxis(polygonA, axis);
+    const auto [minB, maxB] = projectPolygonOnAxis(polygonB, axis);
+    return !(maxA + SHIP_OBSTACLE_CLEARANCE < minB || maxB + SHIP_OBSTACLE_CLEARANCE < minA);
 }
 
 template <size_t N, size_t M>
-bool polygonsIntersect(const std::array<glm::vec2, N> &polygonA, const std::array<glm::vec2, M> &polygonB,
-                       float clearance)
+bool polygonsIntersect(const std::array<glm::vec2, N> &polygonA, const std::array<glm::vec2, M> &polygonB)
 {
     auto hasSeparatingAxis = [&](const auto &polygon) {
-        for (size_t i = 0; i < polygon.size(); ++i)
+        for (const auto &[i, p0] : polygon | std::views::enumerate)
         {
-            const glm::vec2 p0 = polygon[i];
             const glm::vec2 p1 = polygon[(i + 1) % polygon.size()];
             const glm::vec2 edge = p1 - p0;
             const glm::vec2 axis = glm::normalize(glm::vec2{-edge.y, edge.x});
 
-            if (!overlapOnAxis(polygonA, polygonB, axis, clearance))
+            if (!overlapOnAxis(polygonA, polygonB, axis))
             {
                 return true;
             }
@@ -92,6 +88,7 @@ bool polygonsIntersect(const std::array<glm::vec2, N> &polygonA, const std::arra
 
     return !hasSeparatingAxis(polygonA) && !hasSeparatingAxis(polygonB);
 }
+
 } // namespace
 
 World::World()
@@ -104,13 +101,13 @@ World::World()
     }
 }
 
-void World::addObstacle(const glm::vec2 &position, float orientation, float width, float depth)
+void World::addObstacle(const glm::vec2 &position, float orientation, float width, float height)
 {
     obstacles.push_back(ObstacleCollider{
         .position = position,
         .orientation = orientation,
         .width = width,
-        .depth = depth,
+        .height = height,
     });
 }
 
@@ -120,7 +117,7 @@ void World::moveWater(const glm::vec2 &position, float radius)
     {
         for (auto &&[x, data] : row | std::views::enumerate)
         {
-            auto &[height, previousHeight] = data;
+            auto &[height, velocity] = data;
 
             const glm::vec2 cellPosition{x * WORLD_SUBDIVISION_SIZE, y * WORLD_SUBDIVISION_SIZE};
             const float distance = glm::length(cellPosition - position);
@@ -130,7 +127,7 @@ void World::moveWater(const glm::vec2 &position, float radius)
                 height = 0.5f * std::exp(1.0f - 1.0f / (1.0f - normalizedDistance * normalizedDistance));
                 height *= radius;
                 height = std::clamp(height, -WORLD_SUBDIVISION_SIZE * 10.0f, WORLD_SUBDIVISION_SIZE * 10.0f);
-                previousHeight = height;
+                velocity = height;
                 // Todo : compute the total losed volume and readd ot through waves
             }
         }
@@ -165,22 +162,26 @@ void World::update(float deltaTime)
         }
     }
 
-    for (size_t y = 0; y < water.size(); ++y)
+    for (auto &&[y, row] : water | std::views::enumerate)
     {
-        auto &row = water[y];
-        for (size_t x = 0; x < row.size(); ++x)
+        for (auto &&[x, data] : row | std::views::enumerate)
         {
-            auto &data = row[x];
             auto &[height, velocity] = data;
+
             height += velocity * deltaTime;
         }
     }
 }
 
-static glm::vec3 waterColor(float height, float x, float y)
+namespace
+{
+
+glm::vec3 waterColor(float height, float x, float y)
 {
     return glm::mix(WATER_COLOR, glm::vec3(FOAM_COLOR), height / (WORLD_SUBDIVISION_SIZE * 3.0f));
 }
+
+} // namespace
 
 void World::render() const
 {
@@ -207,8 +208,6 @@ void World::render() const
 
 bool World::checkCollision(glm::vec2 &position, float orientation) const
 {
-    bool obstacleCollision = false;
-
     float left = std::numeric_limits<float>::max();
     float right = std::numeric_limits<float>::min();
     float top = std::numeric_limits<float>::max();
@@ -257,13 +256,12 @@ bool World::checkCollision(glm::vec2 &position, float orientation) const
     for (const auto &obstacle : obstacles)
     {
         const auto obstaclePolygon =
-            buildObstaclePolygon(obstacle.position, obstacle.orientation, obstacle.width, obstacle.depth);
-        if (polygonsIntersect(shipPolygon, obstaclePolygon, SHIP_OBSTACLE_CLEARANCE))
+            buildObstaclePolygon(obstacle.position, obstacle.orientation, obstacle.width, obstacle.height);
+        if (polygonsIntersect(shipPolygon, obstaclePolygon))
         {
-            obstacleCollision = true;
-            break;
+            return true;
         }
     }
 
-    return obstacleCollision;
+    return false;
 }

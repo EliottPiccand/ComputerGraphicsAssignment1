@@ -150,7 +150,8 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
             {
                 // Incremental movement helps avoid sticking and improves slide consistency.
                 constexpr float MAX_MOVE_STEP = 8.0f;
-                const int stepCount = std::max(1, static_cast<int>(std::ceil(glm::length(movementDelta) / MAX_MOVE_STEP)));
+                const int stepCount =
+                    std::max(1, static_cast<int>(std::ceil(glm::length(movementDelta) / MAX_MOVE_STEP)));
                 const glm::vec2 stepDelta = movementDelta / static_cast<float>(stepCount);
 
                 for (int i = 0; i < stepCount; ++i)
@@ -290,8 +291,8 @@ void Ship::render() const
         glLineWidth(AIM_RAY_WIDTH);
 
         glBegin(GL_LINES);
-            glVertex2f(position.x, position.y);
-            glVertex2f(targetPosition.x, targetPosition.y);
+        glVertex2f(position.x, position.y);
+        glVertex2f(targetPosition.x, targetPosition.y);
         glEnd();
 
         glPopAttrib();

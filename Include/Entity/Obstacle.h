@@ -1,6 +1,11 @@
 #pragma once
 
+#include "Camera.h"
 #include "Entity/Entity.h"
+#include "EventHandler.h"
+#include "GL.h"
+#include "Input.h"
+#include "World.h"
 
 namespace entity
 {
@@ -11,7 +16,7 @@ class Obstacle : public Entity
     glm::vec2 position;
     float orientation;
     float width;
-    float depth;
+    float height;
 
   public:
     Obstacle(int entityId, glm::vec2 position);
@@ -19,7 +24,7 @@ class Obstacle : public Entity
     [[nodiscard]] const glm::vec2 &getPosition() const;
     [[nodiscard]] float getOrientation() const;
     [[nodiscard]] float getWidth() const;
-    [[nodiscard]] float getDepth() const;
+    [[nodiscard]] float getHeight() const;
 
     void update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world) override;
     void render() const override;

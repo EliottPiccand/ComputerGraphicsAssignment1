@@ -43,7 +43,8 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
                  attempts < 50);
 
         const auto obstacle = newEntity<entity::Obstacle>(obstaclePosition);
-        world.addObstacle(obstacle->getPosition(), obstacle->getOrientation(), obstacle->getWidth(), obstacle->getDepth());
+        world.addObstacle(obstacle->getPosition(), obstacle->getOrientation(), obstacle->getWidth(),
+                          obstacle->getHeight());
     }
 }
 
@@ -52,7 +53,8 @@ void Application::run()
     while (!window->shouldClose())
     {
         const float deltaTime = clock.tick();
-        if (deltaTime > 1.0f) {
+        if (deltaTime > 1.0f)
+        {
             continue;
         }
 

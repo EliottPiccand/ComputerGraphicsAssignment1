@@ -1,7 +1,6 @@
 #include "Entity/Explosion.h"
 
 #include "Event.h"
-#include "Utils/Math.h"
 #include "Utils/Random.h"
 
 using namespace entity;
@@ -49,7 +48,7 @@ void Explosion::render() const
         glRotatef(rotation, 0.0f, 0.0f, 1.0f);
         glScalef(scaleFactor, scaleFactor, 1.0f);
 
-        const glm::vec3 color = lerp(EXPLOSION_COLOR_START, baseColor, t);
+        const glm::vec3 color = glm::mix(EXPLOSION_COLOR_START, baseColor, t);
         glColor3f(color.r, color.g, color.b);
 
         glBegin(GL_TRIANGLES);
