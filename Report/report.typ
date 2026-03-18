@@ -88,6 +88,7 @@ Our program contains several features, including :
 - camera shaking on explosions;
 - ship trail;
 - water waves simulation;
+- randomly generated wooden box obstacles 
 
 and some features not visible by the players, but useful for development :
 - entity system (inheritance based); 
@@ -223,6 +224,9 @@ To display the ship foam trail (see @fig:foam-trail), we decided to store the sh
 
 == Water Waves simulation
 After all those features we still found the game looks flat, especially because of the water background. However, since we were not allowed to use textures nor shaders, we opted for a simulated background. We divided the world into rectangles of 8m $times$ 8m, associated a water height to each of these cell, and performed a simple simulation, inspired by the damped wave equation#footnote[Our implementation is not the real discrete damped wave equation simulation, but a simplified version  aiming to recreate its global behavior without diving into complex mathematics and physics.]. Thus the boat motion (see @fig:ship-waves) and missiles (see @fig:missile-waves) now interact dynamically with the surrounding water, creating waves and interferences patterns. However, adding this feature cost a lot of performances#footnote[This cost is not due to the simulation but by how we render the plane. Drawing a lot (15,625) rectangles with OpenGL immediate rendering result in a lot of draw calls and should be implemented through a shader instead], decreasing the framerate from \~3000 to \~75 frames per seconds.
+
+== Wooden box obstacles
+To add more fun to the game, we decided to add some wooden box obstacles. These boxes are randomly generated at the beginning of the game, and are represented as simple rectangles. They have a hit box, and thus can collide with the ship and missiles. When colliding with the ship, they behave like the world border, but with a smaller hit box. When colliding with missiles, they trigger an explosion, just like if the missile reached its target.
 
 = End-user guide
 The game starts immediately on running the executable. The player can change the ship speed with the `W` and `S` keys (respectively increasing and decreasing the boat speed), and rotate it using the `A` and `D` keys (turing the boat respectively left and right by 15°). In addition, the player can shoot missiles with his mouse : pressing the left click enable aiming mode which displays a ray toward the target. In aiming mode, 2 actions ar possible : cancel fire by clicking (press and release) the right click, or fire by releasing the left click. Fullscreen can be toggle by clicking the F11 key.
