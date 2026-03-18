@@ -3,7 +3,7 @@
 #include <ranges>
 
 #include "Event.h"
-#include "Utils/Math.h"
+#include "Utils/Constants.h"
 #include "Utils/Random.h"
 
 using namespace entity;
@@ -41,16 +41,16 @@ void Explosion::render() const
     glLoadIdentity();
     glTranslatef(position.x, position.y, 0.0f);
 
-    for (const auto &[layerIndex, data] : std::views::enumerate(std::views::zip(layerRotations, EXPLOSION_COLOR_ENDS)))
+    for (const auto &[i, data] : std::views::zip(layerRotations, EXPLOSION_COLOR_ENDS) | std::views::enumerate)
     {
         const auto &[rotation, baseColor] = data;
-        const float scaleFactor = radius / static_cast<float>(1 << layerIndex);
+        const float scaleFactor = radius / static_cast<float>(1 << i);
 
         glPushMatrix();
         glRotatef(rotation, 0.0f, 0.0f, 1.0f);
         glScalef(scaleFactor, scaleFactor, 1.0f);
 
-        const glm::vec3 color = lerp(EXPLOSION_COLOR_START, baseColor, t);
+        const glm::vec3 color = glm::mix(EXPLOSION_COLOR_START, baseColor, t);
         glColor3f(color.r, color.g, color.b);
 
         glBegin(GL_TRIANGLES);

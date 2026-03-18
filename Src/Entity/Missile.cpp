@@ -12,8 +12,17 @@ Missile::Missile(int entityId, glm::vec2 position, glm::vec2 target)
 
 void Missile::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world)
 {
+    const glm::vec2 previousPosition = position;
     const glm::vec2 direction = glm::normalize(target - position);
     position += direction * deltaTime * MISSILE_SPEED;
+
+    glm::vec2 hitPosition{};
+    if (world.checkMissileCollision(previousPosition, position, hitPosition))
+    {
+        events.post<event::TargetReachedEvent>(id, hitPosition);
+        world.moveWater(hitPosition, EXPLOSION_MAX_RADIUS * 0.5f);
+        return;
+    }
 
     if (glm::length(position - target) < MISSILE_TARGET_ERROR_MARGIN)
     {
@@ -28,7 +37,7 @@ void Missile::render() const
     glColor3f(MISSILE_COLOR);
     glPointSize(MISSILE_SIZE);
     glBegin(GL_POINTS);
-        glVertex2f(position.x, position.y);
+    glVertex2f(position.x, position.y);
     glEnd();
 
     // Ray
@@ -41,8 +50,8 @@ void Missile::render() const
     glLineWidth(MISSILE_RAY_WIDTH);
 
     glBegin(GL_LINES);
-        glVertex2f(position.x, position.y);
-        glVertex2f(target.x, target.y);
+    glVertex2f(position.x, position.y);
+    glVertex2f(target.x, target.y);
     glEnd();
 
     glPopAttrib();

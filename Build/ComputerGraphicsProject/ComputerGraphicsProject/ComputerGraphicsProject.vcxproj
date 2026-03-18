@@ -161,6 +161,7 @@
     <ClCompile Include="..\..\..\Src\Entity\Entity.cpp" />
     <ClCompile Include="..\..\..\Src\Entity\Explosion.cpp" />
     <ClCompile Include="..\..\..\Src\Entity\Missile.cpp" />
+    <ClCompile Include="..\..\..\Src\Entity\Obstacle.cpp" />
     <ClCompile Include="..\..\..\Src\Entity\Ship.cpp" />
     <ClCompile Include="..\..\..\Src\Event.cpp" />
     <ClCompile Include="..\..\..\Src\EventHandler.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="..\..\..\Include\Entity\Entity.h" />
     <ClInclude Include="..\..\..\Include\Entity\Explosion.h" />
     <ClInclude Include="..\..\..\Include\Entity\Missile.h" />
+    <ClInclude Include="..\..\..\Include\Entity\Obstacle.h" />
     <ClInclude Include="..\..\..\Include\Entity\Ship.h" />
     <ClInclude Include="..\..\..\Include\Event.h" />
     <ClInclude Include="..\..\..\Include\EventHandler.h" />

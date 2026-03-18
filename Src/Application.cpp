@@ -1,9 +1,11 @@
 #include "Application.h"
 
 #include <format>
+#include <ranges>
 
 #include "Entity/Explosion.h"
 #include "Entity/Missile.h"
+#include "Entity/Obstacle.h"
 #include "Entity/Ship.h"
 #include "Event.h"
 #include "Input.h"
@@ -23,6 +25,42 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
 
     nextEntityId = 0;
     newEntity<entity::Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input);
+
+    // Obstacles
+    const int obstacleCount = Random::randint(1, 3);
+    for (auto &&_ : std::views::iota(0, obstacleCount))
+    {
+        bool spawned = false;
+        for (auto &&_ : std::views::iota(0uz, MAX_OBSTACLE_SPAWN_ATTEMPTS))
+        {
+            const glm::vec2 obstaclePosition{
+                Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_WIDTH - OBSTACLE_SPAWN_MARGIN),
+                Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_HEIGHT - OBSTACLE_SPAWN_MARGIN),
+            };
+
+            if (glm::length(obstaclePosition - SHIP_DEFAULT_POSITION) < OBSTACLE_CENTER_EXCLUSION_RADIUS)
+            {
+                continue;
+            }
+
+            auto obstacle = std::make_shared<entity::Obstacle>(nextEntityId, obstaclePosition);
+            if (!world.canPlaceObstacle(obstacle))
+            {
+                continue;
+            }
+
+            entities.push_back(obstacle);
+            nextEntityId += 1;
+            world.addObstacle(obstacle);
+            spawned = true;
+            break;
+        }
+
+        if (!spawned)
+        {
+            break;
+        }
+    }
 }
 
 void Application::run()
@@ -30,7 +68,8 @@ void Application::run()
     while (!window->shouldClose())
     {
         const float deltaTime = clock.tick();
-        if (deltaTime > 1.0f) {
+        if (deltaTime > 1.0f)
+        {
             continue;
         }
 

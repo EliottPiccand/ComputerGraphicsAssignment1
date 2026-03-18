@@ -1,6 +1,9 @@
 #include "Entity/Ship.h"
 
+#include <algorithm>
+#include <cmath>
 #include <limits>
+#include <ranges>
 
 #include "Event.h"
 #include "Utils/Math.h"
@@ -37,6 +40,9 @@ Ship::Ship(int entityId, glm::vec2 position, float orientation, Input &input)
 
 void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHandler &events, World &world)
 {
+    const glm::vec2 previousPosition = position;
+    const float previousOrientation = orientation;
+
     bool boundingBoxUpdated = false;
 
     // Handle user inputs
@@ -124,7 +130,64 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
     // Collisions
     if (boundingBoxUpdated)
     {
-        world.checkCollision(position, orientation);
+        const glm::vec2 desiredPosition = position;
+        const float desiredOrientation = orientation;
+
+        if (world.checkCollision(position, orientation))
+        {
+            const glm::vec2 movementDelta = desiredPosition - previousPosition;
+            const bool hasMovement = glm::length(movementDelta) > EPSILON;
+
+            // Keep requested orientation only if it does not collide at the previous position.
+            position = previousPosition;
+            orientation = desiredOrientation;
+            if (world.checkCollision(position, orientation))
+            {
+                orientation = previousOrientation;
+                world.checkCollision(position, orientation);
+            }
+
+            if (hasMovement)
+            {
+                // Incremental movement helps avoid sticking and improves slide consistency.
+                const int stepCount =
+                    std::max(1, static_cast<int>(std::ceil(glm::length(movementDelta) / MAX_MOVE_STEP)));
+                const glm::vec2 stepDelta = movementDelta / static_cast<float>(stepCount);
+
+                for (auto &&_ : std::views::iota(0, stepCount))
+                {
+                    glm::vec2 candidate = position + stepDelta;
+                    if (!world.checkCollision(candidate, orientation))
+                    {
+                        position = candidate;
+                        continue;
+                    }
+
+                    bool moved = false;
+
+                    if (std::fabs(stepDelta.x) > EPSILON)
+                    {
+                        glm::vec2 slideX = position;
+                        slideX.x += stepDelta.x;
+                        if (!world.checkCollision(slideX, orientation))
+                        {
+                            position = slideX;
+                            moved = true;
+                        }
+                    }
+
+                    if (!moved && std::fabs(stepDelta.y) > EPSILON)
+                    {
+                        glm::vec2 slideY = position;
+                        slideY.y += stepDelta.y;
+                        if (!world.checkCollision(slideY, orientation))
+                        {
+                            position = slideY;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Target
@@ -228,8 +291,8 @@ void Ship::render() const
         glLineWidth(AIM_RAY_WIDTH);
 
         glBegin(GL_LINES);
-            glVertex2f(position.x, position.y);
-            glVertex2f(targetPosition.x, targetPosition.y);
+        glVertex2f(position.x, position.y);
+        glVertex2f(targetPosition.x, targetPosition.y);
         glEnd();
 
         glPopAttrib();

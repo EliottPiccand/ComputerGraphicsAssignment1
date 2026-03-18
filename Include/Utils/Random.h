@@ -11,4 +11,6 @@ class Random
   public:
     static void initialize();
     [[nodiscard]] static float random(float min, float max);
+    [[nodiscard]] static int randint(int min, int max);
 };
+

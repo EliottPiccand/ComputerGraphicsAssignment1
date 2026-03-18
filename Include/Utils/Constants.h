@@ -160,3 +160,20 @@ constexpr const std::array EXPLOSION_VERTICES = []{
 
     return vertices;
 }();
+
+// *****************
+// *   Obstacles   *
+// *****************
+
+#define OBSTACLE_COLOR rgba(139, 69, 19, 1)
+constexpr const float SHIP_OBSTACLE_CLEARANCE = 3.0f;
+constexpr const size_t OBSTACLE_VERTEX_COUNT = 4;
+constexpr const size_t MAX_OBSTACLE_SPAWN_ATTEMPTS = 100;
+constexpr const float OBSTACLE_SPAWN_MARGIN = 120.0f;
+constexpr const float OBSTACLE_CENTER_EXCLUSION_RADIUS = 260.0f;
+
+// ******************
+// *   Collisions   *
+// ******************
+
+constexpr const float MAX_MOVE_STEP = 8.0f;
