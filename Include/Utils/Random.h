@@ -13,4 +13,3 @@ class Random
     [[nodiscard]] static float random(float min, float max);
     [[nodiscard]] static int randint(int min, int max);
 };
-

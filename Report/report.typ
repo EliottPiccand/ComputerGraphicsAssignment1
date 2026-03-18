@@ -276,4 +276,4 @@ Every part of the code is original, but the camera shaking part mechanic is grea
 Also the water simulation part was inspired by the introduction of #link("https://www.slembcke.net/blog/WaterWaves/")[this post by Scott Lembcke].
 
 = AI-assisted coding references <sec:ai>
-The only part of this program where AI was used was to make the custom `CyclicQueue` iterable. So `CyclicQueue::Iterator`, `CyclicQueue::begin()` and `CyclicQueue::end()` were generated using an LLM.
+The only part of this program where AI was used was to make the custom `CyclicQueue` iterable. So `CyclicQueue::Iterator`, `CyclicQueue::begin()` and `CyclicQueue::end()` were generated using an LLM (thus \~2% of the lines of code).
