@@ -1,12 +1,12 @@
 #include "World.h"
 
-#include "Entity/Obstacle.h"
-
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <optional>
 #include <ranges>
 
+#include "Entity/Obstacle.h"
 #include "Utils/Constants.h"
 
 namespace
@@ -71,7 +71,8 @@ bool overlapOnAxis(const std::array<glm::vec2, N> &polygonA, const std::array<gl
 }
 
 template <size_t N, size_t M>
-bool polygonsIntersect(const std::array<glm::vec2, N> &polygonA, const std::array<glm::vec2, M> &polygonB, float clearance)
+bool polygonsIntersect(const std::array<glm::vec2, N> &polygonA, const std::array<glm::vec2, M> &polygonB,
+                       float clearance)
 {
     auto hasSeparatingAxis = [&](const auto &polygon) {
         for (const auto &[i, p0] : polygon | std::views::enumerate)
@@ -91,22 +92,20 @@ bool polygonsIntersect(const std::array<glm::vec2, N> &polygonA, const std::arra
     return !hasSeparatingAxis(polygonA) && !hasSeparatingAxis(polygonB);
 }
 
-bool segmentIntersectsAabb(const glm::vec2 &start, const glm::vec2 &end, const glm::vec2 &halfExtents, float &hitT)
+std::optional<float> segmentIntersectsAABB(const glm::vec2 &start, const glm::vec2 &end, const glm::vec2 &halfExtents)
 {
-    constexpr float EPS = 1e-6f;
-
     const glm::vec2 direction = end - start;
     float tMin = 0.0f;
     float tMax = 1.0f;
 
-    for (int axis = 0; axis < 2; ++axis)
+    for (glm::vec2::length_type axis = 0; axis < 2; axis++)
     {
         const float origin = start[axis];
         const float delta = direction[axis];
         const float minBound = -halfExtents[axis];
         const float maxBound = halfExtents[axis];
 
-        if (std::fabs(delta) < EPS)
+        if (std::fabs(delta) < EPSILON)
         {
             if (origin < minBound || origin > maxBound)
             {
@@ -127,13 +126,13 @@ bool segmentIntersectsAabb(const glm::vec2 &start, const glm::vec2 &end, const g
         tMax = std::min(tMax, t2);
         if (tMin > tMax)
         {
-            return false;
+            return std::nullopt;
         }
     }
 
-    hitT = tMin;
-    return true;
+    return {tMin};
 }
+
 } // namespace
 
 World::World()
@@ -158,8 +157,9 @@ bool World::canPlaceObstacle(const std::shared_ptr<entity::Obstacle> &obstacle) 
 
     for (const auto &existingObstacle : obstacles)
     {
-        const auto obstaclePolygon = buildObstaclePolygon(existingObstacle->getPosition(), existingObstacle->getOrientation(),
-                                                          existingObstacle->getWidth(), existingObstacle->getHeight());
+        const auto obstaclePolygon =
+            buildObstaclePolygon(existingObstacle->getPosition(), existingObstacle->getOrientation(),
+                                 existingObstacle->getWidth(), existingObstacle->getHeight());
         if (polygonsIntersect(candidatePolygon, obstaclePolygon, 0.0f))
         {
             return false;
@@ -181,16 +181,16 @@ bool World::checkMissileCollision(const glm::vec2 &start, const glm::vec2 &end, 
         const glm::vec2 localEnd = glm::rotate(end - obstacle->getPosition(), rotation);
         const glm::vec2 halfExtents{obstacle->getWidth() * 0.5f, obstacle->getHeight() * 0.5f};
 
-        float hitT = 0.0f;
-        if (!segmentIntersectsAabb(localStart, localEnd, halfExtents, hitT))
+        auto hitT = segmentIntersectsAABB(localStart, localEnd, halfExtents);
+        if (!hitT.has_value())
         {
             continue;
         }
 
         if (hitT < closestHitT)
         {
-            closestHitT = hitT;
-            const glm::vec2 worldHit = start + (end - start) * hitT;
+            closestHitT = *hitT;
+            const glm::vec2 worldHit = start + (end - start) * *hitT;
             hitPosition = worldHit;
             hit = true;
         }
@@ -240,9 +240,9 @@ void World::update(float deltaTime)
             auto &[height, velocity] = data;
 
             const float heightLeft = 0 <= x - 1 ? std::get<0>(water[y][x - 1]) : 0.0f;
-            const float heightRight = x + 1 < row.size() ? std::get<0>(water[y][x + 1]) : 0.0f;
+            const float heightRight = x + 1 < static_cast<long long>(row.size()) ? std::get<0>(water[y][x + 1]) : 0.0f;
             const float heightUp = 0 <= y - 1 ? std::get<0>(water[y - 1][x]) : 0.0f;
-            const float heightDown = y + 1 < water.size() ? std::get<0>(water[y + 1][x]) : 0.0f;
+            const float heightDown = y + 1 < static_cast<long long>(water.size()) ? std::get<0>(water[y + 1][x]) : 0.0f;
 
             const float laplacian = (heightLeft + heightRight + heightUp + heightDown - 4.0f * height);
             velocity += laplacian * WATER_WAVES_SPEED * deltaTime;

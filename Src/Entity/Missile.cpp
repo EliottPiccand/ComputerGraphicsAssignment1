@@ -37,7 +37,7 @@ void Missile::render() const
     glColor3f(MISSILE_COLOR);
     glPointSize(MISSILE_SIZE);
     glBegin(GL_POINTS);
-        glVertex2f(position.x, position.y);
+    glVertex2f(position.x, position.y);
     glEnd();
 
     // Ray
@@ -50,8 +50,8 @@ void Missile::render() const
     glLineWidth(MISSILE_RAY_WIDTH);
 
     glBegin(GL_LINES);
-        glVertex2f(position.x, position.y);
-        glVertex2f(target.x, target.y);
+    glVertex2f(position.x, position.y);
+    glVertex2f(target.x, target.y);
     glEnd();
 
     glPopAttrib();

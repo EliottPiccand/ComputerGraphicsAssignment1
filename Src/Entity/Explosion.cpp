@@ -1,6 +1,9 @@
 #include "Entity/Explosion.h"
 
+#include <ranges>
+
 #include "Event.h"
+#include "Utils/Constants.h"
 #include "Utils/Random.h"
 
 using namespace entity;
@@ -38,11 +41,10 @@ void Explosion::render() const
     glLoadIdentity();
     glTranslatef(position.x, position.y, 0.0f);
 
-    for (size_t layerIndex = 0; layerIndex < layerRotations.size(); ++layerIndex)
+    for (const auto &[i, data] : std::views::zip(layerRotations, EXPLOSION_COLOR_ENDS) | std::views::enumerate)
     {
-        const float rotation = layerRotations[layerIndex];
-        const glm::vec3 &baseColor = EXPLOSION_COLOR_ENDS[layerIndex];
-        const float scaleFactor = radius / static_cast<float>(1 << layerIndex);
+        const auto &[rotation, baseColor] = data;
+        const float scaleFactor = radius / static_cast<float>(1 << i);
 
         glPushMatrix();
         glRotatef(rotation, 0.0f, 0.0f, 1.0f);

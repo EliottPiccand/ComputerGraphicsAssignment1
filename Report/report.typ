@@ -95,7 +95,7 @@ and some features not visible by the players, but useful for development :
 - event system;
 - input system;
 
-In order to compile our program, the only additional requirement is enabling C++23 features (accessible on Visual Studio under `Project > Properties > Configuration Properties > General > C++ Language Standard`). This choice was made in prevision for the following assignments, were we will probably use the C++23 `std::ranges` and `std::views` features to shorten development time. So far, the only part of our code requiring C++23 is `#include <print>` and `std::println` in `Src/Main.cpp`.
+In order to compile our program, the only additional requirement is enabling C++23 features (accessible on Visual Studio under `Project > Properties > Configuration Properties > General > C++ Language Standard`). This choice was made to be able to use the C++23 `std::ranges` and `std::views` features, as well as the `<print>` header, to shorten development time and code readability.
 
 To summarize how our program works, we can use the following pseudo-code (see @alg:main-loop)
 
@@ -226,7 +226,7 @@ To display the ship foam trail (see @fig:foam-trail), we decided to store the sh
 After all those features we still found the game looks flat, especially because of the water background. However, since we were not allowed to use textures nor shaders, we opted for a simulated background. We divided the world into rectangles of 8m $times$ 8m, associated a water height to each of these cell, and performed a simple simulation, inspired by the damped wave equation#footnote[Our implementation is not the real discrete damped wave equation simulation, but a simplified version  aiming to recreate its global behavior without diving into complex mathematics and physics.]. Thus the boat motion (see @fig:ship-waves) and missiles (see @fig:missile-waves) now interact dynamically with the surrounding water, creating waves and interferences patterns. However, adding this feature cost a lot of performances#footnote[This cost is not due to the simulation but by how we render the plane. Drawing a lot (15,625) rectangles with OpenGL immediate rendering result in a lot of draw calls and should be implemented through a shader instead], decreasing the framerate from \~3000 to \~75 frames per seconds.
 
 == Wooden box obstacles
-To add more fun to the game, we decided to add some wooden box obstacles. These boxes are randomly generated at the beginning of the game, and are represented as simple rectangles. They have a hit box, and thus can collide with the ship and missiles. When colliding with the ship, they behave like the world border, but with a smaller hit box. When colliding with missiles, they trigger an explosion, just like if the missile reached its target.
+To add more fun to the game, we decided to add some wooden box obstacles (see @fig:wooden-boxes). These boxes are randomly generated at the beginning of the game, and are represented as simple rectangles. They have a hit box, and thus can collide with the ship and missiles. When colliding with the ship, they behave like the world border, but with a smaller hit box. When colliding with missiles, they trigger an explosion, just like if the missile reached its target.
 
 = End-user guide
 The game starts immediately on running the executable. The player can change the ship speed with the `W` and `S` keys (respectively increasing and decreasing the boat speed), and rotate it using the `A` and `D` keys (turing the boat respectively left and right by 15°). In addition, the player can shoot missiles with his mouse : pressing the left click enable aiming mode which displays a ray toward the target. In aiming mode, 2 actions ar possible : cancel fire by clicking (press and release) the right click, or fire by releasing the left click. Fullscreen can be toggle by clicking the F11 key.
@@ -262,6 +262,11 @@ The game starts immediately on running the executable. The player can change the
   image("Images/MissileWaves.png", width: imageWidth),
   caption: [Waves in the water after a missile explosion]
 ) <fig:missile-waves>
+
+#figure(
+  image("Images/WoodenBoxes.png", width: imageWidth),
+  caption: [Randomly generated wooden boxes]
+) <fig:wooden-boxes>
 
 = Discussions/Conclusions
 During the development, we didn't encountered much issued. However, we had to learn how to use some OpenGL functions such as `glPushMatrix()` and `glPopMatrix()` to make every model matrices properly bind to the right vertices. Moreover, we had to use AI for one part of the code since we didn't find a good tutorial explaining how to implement this feature, but this is more a C++ issue than a Graphics Computing one (see the later section about this topic)

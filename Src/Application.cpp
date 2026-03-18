@@ -1,6 +1,7 @@
 #include "Application.h"
 
 #include <format>
+#include <ranges>
 
 #include "Entity/Explosion.h"
 #include "Entity/Missile.h"
@@ -25,14 +26,12 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
     nextEntityId = 0;
     newEntity<entity::Ship>(SHIP_DEFAULT_POSITION, SHIP_DEFAULT_ORIENTATION, input);
 
-    constexpr float OBSTACLE_SPAWN_MARGIN = 120.0f;
-    constexpr float OBSTACLE_CENTER_EXCLUSION_RADIUS = 260.0f;
-    const int obstacleCount = static_cast<int>(Random::random(1.0f, 3.999f));
-    for (int i = 0; i < obstacleCount; ++i)
+    // Obstacles
+    const int obstacleCount = Random::randint(1, 3);
+    for (auto &&_ : std::views::iota(0, obstacleCount))
     {
-        constexpr int MAX_OBSTACLE_SPAWN_ATTEMPTS = 100;
         bool spawned = false;
-        for (int attempts = 0; attempts < MAX_OBSTACLE_SPAWN_ATTEMPTS; ++attempts)
+        for (auto &&_ : std::views::iota(0uz, MAX_OBSTACLE_SPAWN_ATTEMPTS))
         {
             const glm::vec2 obstaclePosition{
                 Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_WIDTH - OBSTACLE_SPAWN_MARGIN),

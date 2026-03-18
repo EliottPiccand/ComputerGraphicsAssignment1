@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <ranges>
 
 #include "Event.h"
 #include "Utils/Math.h"
@@ -149,12 +150,11 @@ void Ship::update(float deltaTime, Input &input, const Camera &camera, EventHand
             if (hasMovement)
             {
                 // Incremental movement helps avoid sticking and improves slide consistency.
-                constexpr float MAX_MOVE_STEP = 8.0f;
                 const int stepCount =
                     std::max(1, static_cast<int>(std::ceil(glm::length(movementDelta) / MAX_MOVE_STEP)));
                 const glm::vec2 stepDelta = movementDelta / static_cast<float>(stepCount);
 
-                for (int i = 0; i < stepCount; ++i)
+                for (auto &&_ : std::views::iota(0, stepCount))
                 {
                     glm::vec2 candidate = position + stepDelta;
                     if (!world.checkCollision(candidate, orientation))
