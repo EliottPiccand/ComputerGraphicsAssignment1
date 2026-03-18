@@ -30,21 +30,37 @@ Application::Application() : lastFpsUpdate(now()), camera(DEFAULT_WINDOW_WIDTH, 
     const int obstacleCount = static_cast<int>(Random::random(1.0f, 3.999f));
     for (int i = 0; i < obstacleCount; ++i)
     {
-        glm::vec2 obstaclePosition{};
-        int attempts = 0;
-        do
+        constexpr int MAX_OBSTACLE_SPAWN_ATTEMPTS = 100;
+        bool spawned = false;
+        for (int attempts = 0; attempts < MAX_OBSTACLE_SPAWN_ATTEMPTS; ++attempts)
         {
-            obstaclePosition = {
+            const glm::vec2 obstaclePosition{
                 Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_WIDTH - OBSTACLE_SPAWN_MARGIN),
                 Random::random(OBSTACLE_SPAWN_MARGIN, WORLD_HEIGHT - OBSTACLE_SPAWN_MARGIN),
             };
-            attempts += 1;
-        } while (glm::length(obstaclePosition - SHIP_DEFAULT_POSITION) < OBSTACLE_CENTER_EXCLUSION_RADIUS &&
-                 attempts < 50);
 
-        const auto obstacle = newEntity<entity::Obstacle>(obstaclePosition);
-        world.addObstacle(obstacle->getPosition(), obstacle->getOrientation(), obstacle->getWidth(),
-                          obstacle->getHeight());
+            if (glm::length(obstaclePosition - SHIP_DEFAULT_POSITION) < OBSTACLE_CENTER_EXCLUSION_RADIUS)
+            {
+                continue;
+            }
+
+            auto obstacle = std::make_shared<entity::Obstacle>(nextEntityId, obstaclePosition);
+            if (!world.canPlaceObstacle(obstacle))
+            {
+                continue;
+            }
+
+            entities.push_back(obstacle);
+            nextEntityId += 1;
+            world.addObstacle(obstacle);
+            spawned = true;
+            break;
+        }
+
+        if (!spawned)
+        {
+            break;
+        }
     }
 }
 
